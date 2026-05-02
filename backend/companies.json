@@ -1,0 +1,18 @@
+[
+  {
+    "cnpj": "46512675000110",
+    "razao_social": "RR IMPERIO",
+    "db_path": "C:\\DATAGOO CLIENTES\\Clientes Firebird 3\\Dados\\real\\DADOS.FDB",
+    "port": 3050,
+    "user": "SYSDBA",
+    "pass": "masterkey"
+  },
+  {
+    "cnpj": "57153867000102",
+    "razao_social": "GELA GUELA",
+    "db_path": "C:\\DATAGOO CLIENTES\\Clientes Firebird 3\\Dados\\russo\\DADOS.FDB",
+    "port": 3050,
+    "user": "SYSDBA",
+    "pass": "masterkey"
+  }
+]
