@@ -2,12 +2,9 @@
   padding: 24px;
   background: #f3f4f6;
   min-height: 100vh;
-<<<<<<< HEAD
   width: 100%;
   max-width: 1600px;
   margin: 0 auto;
-=======
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
 
 .performance-page {
@@ -506,19 +503,11 @@
 
 .table-responsive {
   overflow-x: auto;
-<<<<<<< HEAD
   width: 100%;
 }
 
 .custom-table {
   min-width: 600px;
-=======
-}
-
-.custom-table {
-  width: 100%;
-  border-collapse: collapse;
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
 
 .custom-table thead tr {
@@ -636,7 +625,6 @@
   .mini-stat-card {
     min-width: auto;
   }
-<<<<<<< HEAD
 }
 @media (max-width: 768px) {
 
@@ -682,6 +670,4 @@
   transform: translateY(-3px);
   transition: 0.18s ease;
   box-shadow: 0 16px 36px rgba(15, 23, 42, 0.08);
-=======
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }

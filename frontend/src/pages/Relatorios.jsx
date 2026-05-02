@@ -4,11 +4,7 @@ import Topbar from "../components/Topbar";
 import "../styles/relatorios.css";
 import "../styles/topbar.css";
 
-<<<<<<< HEAD
 function Relatorios({ onToggleSidebar, isMobileOrTablet }) {
-=======
-function Relatorios() {
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   const navigate = useNavigate();
 
   const [solicitacaoIa, setSolicitacaoIa] = useState(
@@ -92,16 +88,12 @@ function Relatorios() {
 
   return (
     <div className="relatorios-page">
-<<<<<<< HEAD
       <Topbar 
       titulo="Relatórios"
       caminho="Dashboard / Relatórios"
       onToggleSidebar={onToggleSidebar}
       isMobileOrTablet={isMobileOrTablet}
        />
-=======
-      <Topbar titulo="Relatórios" caminho="Dashboard / Relatórios" />
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 
       <div className="relatorios-layout">
         <div className="relatorios-left">

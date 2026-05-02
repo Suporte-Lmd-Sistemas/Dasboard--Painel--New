@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Depends
 from app.schemas.dashboard_financeiro import DashboardFinanceiroResponse
 from app.services.dashboard_financeiro_service import DashboardFinanceiroService
+from app.routes.auth import get_current_user
 
 router = APIRouter(prefix="/api/dashboard", tags=["Dashboard Financeiro"])
 
@@ -12,6 +13,7 @@ def get_dashboard_financeiro(
     start: str | None = Query(default=None),
     end: str | None = Query(default=None),
     empresa_id: int | None = Query(default=None),
+    current_user: dict = Depends(get_current_user),
 ):
     service = DashboardFinanceiroService()
 

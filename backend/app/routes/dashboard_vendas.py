@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Query
-
+from fastapi import APIRouter, Query, Depends
 from app.schemas.dashboard_vendas import DashboardVendasResponse
 from app.services.dashboard_vendas_service import DashboardVendasService
+from app.routes.auth import get_current_user
 
 router = APIRouter(prefix="/api/dashboard", tags=["Dashboard Vendas"])
 
@@ -12,6 +12,7 @@ def get_dashboard_vendas(
     start: str | None = Query(default=None),
     end: str | None = Query(default=None),
     empresa_id: int | None = Query(default=None),
+    current_user: dict = Depends(get_current_user),
 ):
     service = DashboardVendasService()
 

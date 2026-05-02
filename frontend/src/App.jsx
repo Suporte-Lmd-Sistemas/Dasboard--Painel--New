@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 import { useEffect, useState } from "react";
-=======
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 import { Navigate, Route, Routes } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import DashboardVendas from "./pages/DashboardVendas";
@@ -9,15 +6,11 @@ import DashboardFinanceiro from "./pages/DashboardFinanceiro";
 import DashboardMultiEmpresa from "./pages/DashboardMultiEmpresa";
 import Relatorios from "./pages/Relatorios";
 import RelatoriosVendas from "./pages/RelatoriosVendas";
-<<<<<<< HEAD
 import RelatorioPreviewPage from "./pages/RelatorioPreviewPage";
-=======
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 import RelatoriosFinanceiro from "./pages/RelatoriosFinanceiro";
 import RelatoriosConsultoria from "./pages/RelatoriosConsultoria";
 import RelatoriosDiversos from "./pages/RelatoriosDiversos";
 import Funcionarios from "./pages/Funcionarios";
-<<<<<<< HEAD
 import FuncionarioNovoVinculo from "./pages/FuncionarioNovoVinculo";
 import FuncionarioAnalise from "./pages/FuncionarioAnalise";
 import FuncionarioDetalhe from "./pages/FuncionarioDetalhe";
@@ -143,43 +136,12 @@ function AppLayout() {
           />
 
           <Route path="*" element={<Navigate to="/dashboard/vendas" replace />} />
-=======
-import FuncionarioDetalhe from "./pages/FuncionarioDetalhe";
-import FuncionarioAnalise from "./pages/FuncionarioAnalise";
-import Performance from "./pages/Performance";
-
-function App() {
-  return (
-    <div>
-      <Sidebar />
-
-      <div style={{ marginLeft: "240px" }}>
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard/vendas" replace />} />
-
-          <Route path="/dashboard/vendas" element={<DashboardVendas />} />
-          <Route path="/dashboard/financeiro" element={<DashboardFinanceiro />} />
-          <Route path="/dashboard/multiempresa" element={<DashboardMultiEmpresa />} />
-
-          <Route path="/relatorios" element={<Relatorios />} />
-          <Route path="/relatorios/vendas" element={<RelatoriosVendas />} />
-          <Route path="/relatorios/financeiro" element={<RelatoriosFinanceiro />} />
-          <Route path="/relatorios/consultoria" element={<RelatoriosConsultoria />} />
-          <Route path="/relatorios/diversos" element={<RelatoriosDiversos />} />
-
-          <Route path="/funcionarios" element={<Funcionarios />} />
-          <Route path="/funcionarios/:id" element={<FuncionarioDetalhe />} />
-          <Route path="/funcionarios/:id/analise" element={<FuncionarioAnalise />} />
-
-          <Route path="/performance" element={<Performance />} />
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
         </Routes>
       </div>
     </div>
   );
 }
 
-<<<<<<< HEAD
 function PrivateApp() {
   return (
     <ProtectedRoute>
@@ -196,6 +158,3 @@ export default function App() {
     </Routes>
   );
 }
-=======
-export default App;
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f

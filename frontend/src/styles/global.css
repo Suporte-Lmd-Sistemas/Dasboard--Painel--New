@@ -17,7 +17,6 @@ a {
 
 button {
   cursor: pointer;
-<<<<<<< HEAD
 }
 
 .app-shell {
@@ -47,6 +46,4 @@ button {
 .notranslate,
 .notranslate * {
   translate: no !important;
-=======
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }

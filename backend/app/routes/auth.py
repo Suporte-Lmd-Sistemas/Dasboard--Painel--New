@@ -100,3 +100,21 @@ def me(authorization: str = Header(default="")):
         "perfil": payload["perfil"],
         "cnpj": payload.get("cnpj", ""),
     }
+
+
+def get_current_user(authorization: str = Header(default="")):
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token não informado"
+        )
+
+    token = authorization.replace("Bearer ", "").strip()
+    try:
+        payload = decode_access_token(token)
+        return payload
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Sessão inválida ou expirada"
+        )

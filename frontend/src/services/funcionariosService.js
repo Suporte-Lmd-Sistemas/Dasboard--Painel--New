@@ -1,11 +1,7 @@
 import api from "./api";
 
 export async function listarFuncionarios() {
-<<<<<<< HEAD
   const response = await api.get("/funcionarios/");
-=======
-  const response = await api.get("/funcionarios");
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   return response.data;
 }
 
@@ -22,11 +18,7 @@ export async function detalharFuncionario(id) {
 }
 
 export async function criarFuncionario(dados) {
-<<<<<<< HEAD
   const response = await api.post("/funcionarios/", dados);
-=======
-  const response = await api.post("/funcionarios", dados);
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   return response.data;
 }
 
@@ -41,7 +33,6 @@ export async function excluirFuncionario(id) {
 }
 
 export async function listarDepartamentos() {
-<<<<<<< HEAD
   const response = await api.get("/departamentos/");
   return response.data;
 }
@@ -58,14 +49,10 @@ export async function atualizarDepartamento(id, dados) {
 
 export async function excluirDepartamento(id) {
   const response = await api.delete(`/departamentos/${id}`);
-=======
-  const response = await api.get("/departamentos");
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   return response.data;
 }
 
 export async function listarCargos() {
-<<<<<<< HEAD
   const response = await api.get("/cargos/");
   return response.data;
 }
@@ -82,8 +69,5 @@ export async function atualizarCargo(id, dados) {
 
 export async function excluirCargo(id) {
   const response = await api.delete(`/cargos/${id}`);
-=======
-  const response = await api.get("/cargos");
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   return response.data;
 }
