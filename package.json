@@ -1,8 +1,12 @@
 {
   "dependencies": {
+<<<<<<< HEAD
     "axios": "^1.14.0",
     "cors": "^2.8.6",
     "leaflet": "^1.9.4",
     "react-leaflet": "^5.0.0"
+=======
+    "axios": "^1.14.0"
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   }
 }

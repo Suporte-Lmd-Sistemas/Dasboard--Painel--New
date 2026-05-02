@@ -1,4 +1,5 @@
 .dashboard-filters {
+<<<<<<< HEAD
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -9,10 +10,24 @@
   border-radius: 20px;
   background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+=======
+  background: white;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
 
 .filters-left {
   display: flex;
+<<<<<<< HEAD
   flex-direction: column;
   gap: 14px;
   flex: 1;
@@ -23,10 +38,22 @@
   font-size: 13px;
   font-weight: 700;
   color: #475569;
+=======
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
 
 .filter-buttons {
   display: flex;
+<<<<<<< HEAD
   flex-wrap: wrap;
   gap: 10px;
 }
@@ -54,12 +81,38 @@
   background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
   color: #ffffff;
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+=======
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  color: #374151;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.filter-btn:hover {
+  background: #eef2ff;
+  border-color: #93c5fd;
+}
+
+.filter-btn.active {
+  background: #e0edff;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
 
 .filters-right {
   display: flex;
   align-items: center;
   gap: 10px;
+<<<<<<< HEAD
   flex-shrink: 0;
 }
 
@@ -184,4 +237,21 @@
   .custom-date-field {
     min-width: 100%;
   }
+=======
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.filter-select {
+  border: 1px solid #d1d5db;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  min-width: 150px;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }

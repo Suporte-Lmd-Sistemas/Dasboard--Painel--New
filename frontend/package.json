@@ -13,8 +13,12 @@
     "axios": "^1.15.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+<<<<<<< HEAD
     "react-router-dom": "^7.14.0",
     "recharts": "^3.8.1"
+=======
+    "react-router-dom": "^7.14.0"
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",

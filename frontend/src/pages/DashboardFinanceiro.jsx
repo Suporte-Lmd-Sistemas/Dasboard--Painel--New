@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 ﻿import { useEffect, useMemo, useState } from "react";
 import Topbar from "../components/Topbar";
 import api from "../services/api";
 import { useEmpresa } from "../context/EmpresaContext";
+=======
+import { useEffect, useMemo, useState } from "react";
+import Topbar from "../components/Topbar";
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 import "../styles/dashboard.css";
 import "../styles/topbar.css";
 import "../styles/financeiro-dashboard.css";
@@ -10,16 +15,25 @@ const PERIOD_OPTIONS = [
   {
     key: "today",
     label: "Hoje",
+<<<<<<< HEAD
     description: "Leitura rapida do fechamento diário",
+=======
+    description: "Leitura rapida do fechamento diario",
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   },
   {
     key: "yesterday",
     label: "Ontem",
+<<<<<<< HEAD
     description: "Comparativo do ultimo dia útil",
+=======
+    description: "Comparativo do ultimo dia util",
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   },
   {
     key: "week",
     label: "Esta Semana",
+<<<<<<< HEAD
     description: "Visão consolidada da semana corrente",
   },
   {
@@ -31,11 +45,28 @@ const PERIOD_OPTIONS = [
     key: "previousMonth",
     label: "Mês Anterior",
     description: "Referencia fechada do ultimo mês",
+=======
+    description: "Visao consolidada da semana corrente",
+  },
+  {
+    key: "month",
+    label: "Este Mes",
+    description: "Acompanhamento do mes em andamento",
+  },
+  {
+    key: "previousMonth",
+    label: "Mes Anterior",
+    description: "Referencia fechada do ultimo mes",
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   },
   {
     key: "year",
     label: "Este Ano",
+<<<<<<< HEAD
     description: "Panorama acumulado do exercício",
+=======
+    description: "Panorama acumulado do exercicio",
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   },
   {
     key: "custom",
@@ -105,6 +136,7 @@ function getHeight(value, maxValue, maxHeight) {
     return 0;
   }
 
+<<<<<<< HEAD
   return Math.max((Number(value || 0) / maxValue) * maxHeight, 18);
 }
 
@@ -116,12 +148,25 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
   const [customRange, setCustomRange] = useState({
     start: "",
     end: "",
+=======
+  return Math.max((value / maxValue) * maxHeight, 18);
+}
+
+function DashboardFinanceiro() {
+  const [selectedPeriod, setSelectedPeriod] = useState("month");
+  const [selectedType, setSelectedType] = useState("faturamento");
+  const [empresaId, setEmpresaId] = useState("");
+  const [customRange, setCustomRange] = useState({
+    start: "2026-04-01",
+    end: "2026-04-10",
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   });
 
   const [financialData, setFinancialData] = useState(EMPTY_DATA);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+<<<<<<< HEAD
   const selectedEmpresaId = useMemo(() => {
     return empresaAtual?.id ? String(empresaAtual.id) : "";
   }, [empresaAtual]);
@@ -142,6 +187,12 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
       PERIOD_OPTIONS[3]
     );
   }, [selectedPeriod]);
+=======
+  const selectedPeriodData = useMemo(
+    () => PERIOD_OPTIONS.find((option) => option.key === selectedPeriod) || PERIOD_OPTIONS[3],
+    [selectedPeriod]
+  );
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 
   useEffect(() => {
     let cancelled = false;
@@ -156,25 +207,48 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
           type: selectedType,
         });
 
+<<<<<<< HEAD
         if (selectedEmpresaId) {
           params.append("empresa_id", selectedEmpresaId);
         }
 
+=======
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
         if (selectedPeriod === "custom") {
           if (customRange.start) {
             params.append("start", customRange.start);
           }
+<<<<<<< HEAD
 
+=======
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
           if (customRange.end) {
             params.append("end", customRange.end);
           }
         }
 
+<<<<<<< HEAD
         const response = await api.get(
           `/api/dashboard/financeiro?${params.toString()}`
         );
 
         const data = response.data;
+=======
+        if (empresaId) {
+          params.append("empresa_id", empresaId);
+        }
+
+        const response = await fetch(
+          `http://localhost:8000/api/dashboard/financeiro?${params.toString()}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Erro ao carregar o dashboard financeiro");
+        }
+
+        const data = await response.json();
+        console.log("DADOS BACKEND:", data);
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 
         if (!cancelled) {
           setFinancialData({
@@ -186,7 +260,11 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
         console.error("Erro ao carregar dashboard:", err);
 
         if (!cancelled) {
+<<<<<<< HEAD
           setError(err?.message || "Falha ao carregar dados");
+=======
+          setError(err.message || "Falha ao carregar dados");
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
           setFinancialData(EMPTY_DATA);
         }
       } finally {
@@ -196,13 +274,18 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
       }
     }
 
+<<<<<<< HEAD
     if (!loadingEmpresas && selectedEmpresaId) {
       loadDashboard();
     }
+=======
+    loadDashboard();
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 
     return () => {
       cancelled = true;
     };
+<<<<<<< HEAD
   }, [
     selectedPeriod,
     selectedType,
@@ -223,6 +306,25 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
       return accumulator + Number(item.despesas || 0);
     }, 0);
   }, [financialData.receitasDespesas]);
+=======
+  }, [selectedPeriod, selectedType, customRange.start, customRange.end, empresaId]);
+
+  const totalReceitas = useMemo(
+    () =>
+      financialData.receitasDespesas.reduce((accumulator, item) => {
+        return accumulator + Number(item.receitas || 0);
+      }, 0),
+    [financialData.receitasDespesas]
+  );
+
+  const totalDespesas = useMemo(
+    () =>
+      financialData.receitasDespesas.reduce((accumulator, item) => {
+        return accumulator + Number(item.despesas || 0);
+      }, 0),
+    [financialData.receitasDespesas]
+  );
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 
   const saldoPeriodo = totalReceitas - totalDespesas;
 
@@ -244,9 +346,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
       return 0;
     }
 
+<<<<<<< HEAD
     return Math.max(
       ...financialData.aging.map((item) => Number(item.valor || 0))
     );
+=======
+    return Math.max(...financialData.aging.map((item) => Number(item.valor || 0)));
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   }, [financialData.aging]);
 
   const maxCliente = useMemo(() => {
@@ -265,6 +371,7 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
     }
 
     return Math.max(
+<<<<<<< HEAD
       ...financialData.melhoresFornecedores.map((item) =>
         Number(item.quantidade || 0)
       )
@@ -276,6 +383,19 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
       return accumulator + Number(item.quantidade || 0);
     }, 0);
   }, [financialData.cidadesClientes]);
+=======
+      ...financialData.melhoresFornecedores.map((item) => Number(item.quantidade || 0))
+    );
+  }, [financialData.melhoresFornecedores]);
+
+  const totalClientesCidades = useMemo(
+    () =>
+      financialData.cidadesClientes.reduce((accumulator, item) => {
+        return accumulator + Number(item.quantidade || 0);
+      }, 0),
+    [financialData.cidadesClientes]
+  );
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 
   const percentualInadimplencia = useMemo(() => {
     if (!financialData.inadimplencia.totalReceber) {
@@ -294,6 +414,7 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
       ? `${customRange.start} a ${customRange.end}`
       : "Selecione a faixa";
 
+<<<<<<< HEAD
   const selectedTypeLabel =
     selectedType === "aberto" ? "Aberto" : "Faturados";
 
@@ -305,15 +426,27 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
         onToggleSidebar={onToggleSidebar}
         isMobileOrTablet={isMobileOrTablet}
       />
+=======
+  return (
+    <div className="dashboard-page financial-dashboard-page">
+      <Topbar titulo="Dashboard" caminho="Dashboard / Financeiro" />
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 
       <section className="chart-box financial-filter-panel">
         <div className="financial-filter-top">
           <div>
             <span className="financial-section-kicker">Painel financeiro</span>
+<<<<<<< HEAD
             <h3>Fluxo, inadimplência e concentração por carteira</h3>
             <p>
               Dashboard analítico com visão completa do financeiro, aging e carteira,
               permitindo uma gestão eficiente por clientes, fornecedores e região.
+=======
+            <h3>Fluxo, inadimplencia e concentracao por carteira</h3>
+            <p>
+              Dashboard analitico com foco em faturamento, aging, carteira aberta e
+              leitura gerencial por clientes, fornecedores e praca.
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
             </p>
           </div>
 
@@ -321,18 +454,27 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
             <div className="financial-meta-card">
               <span>Recorte ativo</span>
               <strong>
+<<<<<<< HEAD
                 {selectedPeriod === "custom"
                   ? customPeriodLabel
                   : selectedPeriodData.label}
+=======
+                {selectedPeriod === "custom" ? customPeriodLabel : selectedPeriodData.label}
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
               </strong>
             </div>
 
             <div className="financial-meta-card financial-meta-card--dark">
               <span>Modo</span>
+<<<<<<< HEAD
               <strong>{selectedTypeLabel}</strong>
               <small>
                 {loading ? "Carregando dados..." : "Dados integrados ao ERP"}
               </small>
+=======
+              <strong>{selectedType === "faturamento" ? "Faturamento" : selectedType}</strong>
+              <small>{loading ? "Carregando dados..." : "Dados integrados ao ERP"}</small>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
             </div>
           </div>
         </div>
@@ -345,9 +487,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
               {PERIOD_OPTIONS.map((option) => (
                 <button
                   className={`financial-chip ${
+<<<<<<< HEAD
                     selectedPeriod === option.key
                       ? "financial-chip--active"
                       : ""
+=======
+                    selectedPeriod === option.key ? "financial-chip--active" : ""
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                   }`}
                   key={option.key}
                   onClick={() => setSelectedPeriod(option.key)}
@@ -358,6 +504,7 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
               ))}
             </div>
 
+<<<<<<< HEAD
             <p className="financial-filter-help">
               {selectedPeriodData.description}
             </p>
@@ -367,6 +514,9 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                 Empresa ativa: <strong>{selectedEmpresaNome}</strong>
               </p>
             ) : null}
+=======
+            <p className="financial-filter-help">{selectedPeriodData.description}</p>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
           </div>
 
           <div className="financial-filter-side">
@@ -377,10 +527,27 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                 onChange={(event) => setSelectedType(event.target.value)}
                 value={selectedType}
               >
+<<<<<<< HEAD
                 <option value="aberto">Aberto</option>
                 <option value="faturado">Faturados</option>
               </select>
             </div>
+=======
+                <option value="faturamento">Faturamento</option>
+              </select>
+            </div>
+
+            <div className="financial-select-group">
+              <label htmlFor="financeiro-empresa">Empresa</label>
+              <input
+                id="financeiro-empresa"
+                type="number"
+                value={empresaId}
+                onChange={(event) => setEmpresaId(event.target.value)}
+                placeholder="Todas"
+              />
+            </div>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
           </div>
         </div>
 
@@ -425,9 +592,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
         <article className="financial-kpi-card financial-kpi-card--payable">
           <div className="financial-kpi-header">
             <div>
+<<<<<<< HEAD
               <span className="financial-kpi-tag">
                 {selectedType === "aberto" ? "Saida prevista" : "Saida realizada"}
               </span>
+=======
+              <span className="financial-kpi-tag">Saida prevista</span>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
               <h3>Contas a Pagar</h3>
             </div>
 
@@ -440,9 +611,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
             {formatCurrency(financialData.contasPagar.total)}
           </strong>
 
+<<<<<<< HEAD
           <p className="financial-kpi-description">
             {financialData.contasPagar.subtitle}
           </p>
+=======
+          <p className="financial-kpi-description">{financialData.contasPagar.subtitle}</p>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 
           <div className="financial-sparkline">
             {financialData.contasPagar.history.map((value, index) => (
@@ -451,28 +626,44 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                 key={`payable-${index}`}
                 style={{
                   height: `${getHeight(
+<<<<<<< HEAD
                     Number(value || 0),
+=======
+                    value,
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                     Math.max(...financialData.contasPagar.history, 1),
                     78
                   )}px`,
                 }}
+<<<<<<< HEAD
                 title={formatCurrency(value)}
+=======
+                title={`${value} pontos`}
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
               ></div>
             ))}
           </div>
 
           <div className="financial-kpi-footer">
             <span>{financialData.contasPagar.highlight}</span>
+<<<<<<< HEAD
             <strong>{formatNumber(financialData.contasPagar.history.length)}</strong>
+=======
+            <strong>{formatNumber(financialData.contasPagar.history.length)} pontos</strong>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
           </div>
         </article>
 
         <article className="financial-kpi-card financial-kpi-card--receivable">
           <div className="financial-kpi-header">
             <div>
+<<<<<<< HEAD
               <span className="financial-kpi-tag">
                 {selectedType === "aberto" ? "Entrada prevista" : "Entrada realizada"}
               </span>
+=======
+              <span className="financial-kpi-tag">Entrada prevista</span>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
               <h3>Contas a Receber</h3>
             </div>
 
@@ -496,25 +687,38 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                 key={`receivable-${index}`}
                 style={{
                   height: `${getHeight(
+<<<<<<< HEAD
                     Number(value || 0),
+=======
+                    value,
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                     Math.max(...financialData.contasReceber.history, 1),
                     78
                   )}px`,
                 }}
+<<<<<<< HEAD
                 title={formatCurrency(value)}
+=======
+                title={`${value} pontos`}
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
               ></div>
             ))}
           </div>
 
           <div className="financial-kpi-footer">
             <span>{financialData.contasReceber.highlight}</span>
+<<<<<<< HEAD
             <strong>{formatNumber(financialData.contasReceber.history.length)}</strong>
+=======
+            <strong>{formatNumber(financialData.contasReceber.history.length)} pontos</strong>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
           </div>
         </article>
 
         <article className="financial-kpi-card financial-kpi-card--delinquency">
           <div className="financial-kpi-header">
             <div>
+<<<<<<< HEAD
               <span className="financial-kpi-tag">Indicadores críticos</span>
               <h3>Inadimplência</h3>
             </div>
@@ -522,10 +726,18 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
             <span className="financial-kpi-pill financial-kpi-pill--alert">
               Acompanhamento
             </span>
+=======
+              <span className="financial-kpi-tag">Indicadores criticos</span>
+              <h3>Inadimplencia</h3>
+            </div>
+
+            <span className="financial-kpi-pill financial-kpi-pill--alert">Acompanhamento</span>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
           </div>
 
           <div className="financial-delinquency-rate">
             <strong>{formatPercent(financialData.inadimplencia.taxa)}</strong>
+<<<<<<< HEAD
             <span>
               {selectedType === "aberto" ? "da carteira" : "do total filtrado"}
             </span>
@@ -535,11 +747,20 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
             {selectedType === "aberto"
               ? "Tenha total controle sobre sua carteira financeira com uma visão clara, rápida e estratégica. Acompanhe em tempo real os valores em aberto, atrasados e a recuperação no mês, facilitando a tomada de decisão."
               : "Acompanhe os valores já recebidos dentro do recorte selecionado, permitindo comparar a performance financeira e a recuperação registrada no período."}
+=======
+            <span>da carteira</span>
+          </div>
+
+          <p className="financial-kpi-description">
+            Exposicao da carteira com leitura rapida entre valores em aberto, atrasados
+            e recuperacao no mes.
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
           </p>
 
           <div className="financial-delinquency-grid">
             <div className="financial-delinquency-metric">
               <span>Total vencido</span>
+<<<<<<< HEAD
               <strong>
                 {formatCurrency(financialData.inadimplencia.totalVencido)}
               </strong>
@@ -559,6 +780,19 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
               <strong>
                 {formatCurrency(financialData.inadimplencia.recuperadoMes)}
               </strong>
+=======
+              <strong>{formatCurrency(financialData.inadimplencia.totalVencido)}</strong>
+            </div>
+
+            <div className="financial-delinquency-metric">
+              <span>Total a receber</span>
+              <strong>{formatCurrency(financialData.inadimplencia.totalReceber)}</strong>
+            </div>
+
+            <div className="financial-delinquency-metric">
+              <span>Recuperado</span>
+              <strong>{formatCurrency(financialData.inadimplencia.recuperadoMes)}</strong>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
             </div>
           </div>
         </article>
@@ -570,11 +804,15 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
             <div>
               <span className="financial-panel-kicker">Bloco central</span>
               <h3>Receitas x Despesas</h3>
+<<<<<<< HEAD
               <p>
                 {selectedType === "aberto"
                   ? "Comparativo mensal dos valores em aberto para acompanhamento do resultado financeiro."
                   : "Comparativo mensal dos valores recebidos e pagos para acompanhamento do resultado financeiro."}
               </p>
+=======
+              <p>Comparativo mensal da geracao de caixa contra a estrutura de custos.</p>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
             </div>
 
             <div className="financial-summary-pills">
@@ -615,6 +853,7 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                     <div
                       className="financial-bar financial-bar--revenue"
                       style={{
+<<<<<<< HEAD
                         height: `${getHeight(
                           Number(item.receitas || 0),
                           maxReceitasDespesas,
@@ -624,11 +863,17 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                       title={`${item.label} - Receitas ${formatCurrency(
                         item.receitas
                       )}`}
+=======
+                        height: `${getHeight(item.receitas, maxReceitasDespesas, 214)}px`,
+                      }}
+                      title={`${item.label} - Receitas ${formatCurrency(item.receitas)}`}
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                     ></div>
 
                     <div
                       className="financial-bar financial-bar--expense"
                       style={{
+<<<<<<< HEAD
                         height: `${getHeight(
                           Number(item.despesas || 0),
                           maxReceitasDespesas,
@@ -638,16 +883,26 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                       title={`${item.label} - Despesas ${formatCurrency(
                         item.despesas
                       )}`}
+=======
+                        height: `${getHeight(item.despesas, maxReceitasDespesas, 214)}px`,
+                      }}
+                      title={`${item.label} - Despesas ${formatCurrency(item.despesas)}`}
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                     ></div>
                   </div>
 
                   <div className="financial-month-values">
+<<<<<<< HEAD
                     <strong className="financial-month-label">
                       {item.label}
                     </strong>
                     <span className="financial-month-meta">
                       {formatCurrency(item.receitas)}
                     </span>
+=======
+                    <strong className="financial-month-label">{item.label}</strong>
+                    <span className="financial-month-meta">{formatCurrency(item.receitas)}</span>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                   </div>
                 </div>
               ))}
@@ -660,11 +915,15 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
             <div>
               <span className="financial-panel-kicker">Bloco central</span>
               <h3>Analise de Aging</h3>
+<<<<<<< HEAD
               <p>
                 {selectedType === "aberto"
                   ? "Leitura da concentracao da carteira por faixa de atraso e titulos a vencer."
                   : "Leitura dos valores filtrados por faixa de vencimento, considerando a lógica do modo faturado."}
               </p>
+=======
+              <p>Leitura da concentracao da carteira por faixa de atraso e titulos a vencer.</p>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
             </div>
 
             <div className="financial-summary-pill financial-summary-pill--alert">
@@ -684,6 +943,7 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                 <div className="financial-aging-track">
                   <div
                     className={`financial-aging-fill financial-aging-fill--${item.tone}`}
+<<<<<<< HEAD
                     style={{
                       width: `${
                         maxAging
@@ -697,6 +957,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                 <strong className="financial-aging-value">
                   {formatCurrency(item.valor)}
                 </strong>
+=======
+                    style={{ width: `${maxAging ? (item.valor / maxAging) * 100 : 0}%` }}
+                  ></div>
+                </div>
+
+                <strong className="financial-aging-value">{formatCurrency(item.valor)}</strong>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
               </div>
             ))}
           </div>
@@ -709,11 +976,15 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
             <div>
               <span className="financial-panel-kicker">Blocos inferiores</span>
               <h3>Melhores Clientes</h3>
+<<<<<<< HEAD
               <p>
                 {selectedType === "aberto"
                   ? "Top 5 clientes com maior valor em aberto no recorte atual."
                   : "Top 5 clientes com maior valor recebido no recorte atual."}
               </p>
+=======
+              <p>Top 5 clientes com maior volume de compras no recorte atual.</p>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
             </div>
           </div>
 
@@ -722,6 +993,7 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
               <div className="financial-ranking-item" key={item.nome}>
                 <div className="financial-ranking-head">
                   <div className="financial-ranking-title">
+<<<<<<< HEAD
                     <span className="financial-ranking-position">
                       {index + 1}
                     </span>
@@ -732,6 +1004,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                         {formatNumber(item.pedidos)}{" "}
                         {selectedType === "aberto" ? "titulos no periodo" : "movimentos no periodo"}
                       </span>
+=======
+                    <span className="financial-ranking-position">{index + 1}</span>
+
+                    <div className="financial-ranking-name">
+                      <strong>{item.nome}</strong>
+                      <span>{formatNumber(item.pedidos)} compras no periodo</span>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                     </div>
                   </div>
 
@@ -743,6 +1022,7 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                 <div className="financial-ranking-track">
                   <div
                     className="financial-ranking-fill financial-ranking-fill--client"
+<<<<<<< HEAD
                     style={{
                       width: `${
                         maxCliente
@@ -750,6 +1030,9 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                           : 0
                       }%`,
                     }}
+=======
+                    style={{ width: `${maxCliente ? (item.valor / maxCliente) * 100 : 0}%` }}
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                   ></div>
                 </div>
               </div>
@@ -762,11 +1045,15 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
             <div>
               <span className="financial-panel-kicker">Blocos inferiores</span>
               <h3>Melhores Fornecedores</h3>
+<<<<<<< HEAD
               <p>
                 {selectedType === "aberto"
                   ? "Top 5 parceiros por maior volume em aberto no recorte atual."
                   : "Top 5 parceiros por maior volume pago no recorte atual."}
               </p>
+=======
+              <p>Top 5 parceiros por quantidade de compras realizadas.</p>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
             </div>
           </div>
 
@@ -786,7 +1073,11 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                   </div>
 
                   <strong className="financial-ranking-amount">
+<<<<<<< HEAD
                     {formatNumber(item.quantidade)} registros
+=======
+                    {formatNumber(item.quantidade)} compras
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                   </strong>
                 </div>
 
@@ -794,11 +1085,15 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                   <div
                     className="financial-ranking-fill financial-ranking-fill--supplier"
                     style={{
+<<<<<<< HEAD
                       width: `${
                         maxFornecedor
                           ? (Number(item.quantidade || 0) / maxFornecedor) * 100
                           : 0
                       }%`,
+=======
+                      width: `${maxFornecedor ? (item.quantidade / maxFornecedor) * 100 : 0}%`,
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                     }}
                   ></div>
                 </div>
@@ -839,8 +1134,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                           item.status === "Critico"
                             ? "financial-status-badge--critical"
                             : item.status === "Reposicao"
+<<<<<<< HEAD
                             ? "financial-status-badge--restock"
                             : "financial-status-badge--attention"
+=======
+                              ? "financial-status-badge--restock"
+                              : "financial-status-badge--attention"
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                         }`}
                       >
                         {item.status}
@@ -882,9 +1182,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                     <td>
                       {formatPercent(
                         totalClientesCidades
+<<<<<<< HEAD
                           ? (Number(item.quantidade || 0) /
                               totalClientesCidades) *
                               100
+=======
+                          ? (item.quantidade / totalClientesCidades) * 100
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                           : 0
                       )}
                     </td>
@@ -900,17 +1204,25 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
             <div>
               <span className="financial-panel-kicker">Bloco final</span>
               <h3>Mapa geografico</h3>
+<<<<<<< HEAD
               <p>
                 Concentracao dos clientes por praca com destaque para o eixo
                 Sudeste.
               </p>
+=======
+              <p>Concentracao dos clientes por praca com destaque para o eixo Sudeste.</p>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
             </div>
 
             <div className="financial-summary-pill">
               <span>Pracas monitoradas</span>
+<<<<<<< HEAD
               <strong>
                 {formatNumber(financialData.cidadesClientes.length)}
               </strong>
+=======
+              <strong>{formatNumber(financialData.cidadesClientes.length)}</strong>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
             </div>
           </div>
 
@@ -938,6 +1250,7 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                 ))}
 
                 {financialData.cidadesClientes.map((item) => (
+<<<<<<< HEAD
                   <g
                     key={item.cidade}
                     transform={`translate(${Number(item.x || 0)}, ${Number(
@@ -950,12 +1263,22 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                       fill={item.cor || "#2563eb"}
                       fillOpacity="0.16"
                       r={16 + Number(item.quantidade || 0) / 18}
+=======
+                  <g key={item.cidade} transform={`translate(${item.x}, ${item.y})`}>
+                    <circle
+                      cx="0"
+                      cy="0"
+                      fill={item.cor}
+                      fillOpacity="0.16"
+                      r={16 + item.quantidade / 18}
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                     />
                     <circle
                       cx="0"
                       cy="0"
                       fill="#ffffff"
                       r="12"
+<<<<<<< HEAD
                       stroke={item.cor || "#2563eb"}
                       strokeWidth="3"
                     />
@@ -965,6 +1288,12 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                       fill={item.cor || "#2563eb"}
                       r="4.5"
                     />
+=======
+                      stroke={item.cor}
+                      strokeWidth="3"
+                    />
+                    <circle cx="0" cy="0" fill={item.cor} r="4.5" />
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                     <text className="financial-map-label" x="18" y="5">
                       {item.cidade}
                     </text>
@@ -976,6 +1305,7 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
 
           <div className="financial-map-legend">
             {financialData.cidadesClientes.map((item) => (
+<<<<<<< HEAD
               <div
                 className="financial-map-legend-item"
                 key={`legend-${item.cidade}`}
@@ -984,6 +1314,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                   <span
                     className="financial-map-legend-dot"
                     style={{ backgroundColor: item.cor || "#2563eb" }}
+=======
+              <div className="financial-map-legend-item" key={`legend-${item.cidade}`}>
+                <div className="financial-map-legend-copy">
+                  <span
+                    className="financial-map-legend-dot"
+                    style={{ backgroundColor: item.cor }}
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                   ></span>
 
                   <div>
@@ -991,9 +1328,13 @@ function DashboardFinanceiro({ onToggleSidebar, isMobileOrTablet }) {
                     <span>
                       {formatPercent(
                         totalClientesCidades
+<<<<<<< HEAD
                           ? (Number(item.quantidade || 0) /
                               totalClientesCidades) *
                               100
+=======
+                          ? (item.quantidade / totalClientesCidades) * 100
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
                           : 0
                       )}{" "}
                       da base

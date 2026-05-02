@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
+<<<<<<< HEAD
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000",
   headers: {
     "Content-Type": "application/json",
@@ -41,4 +42,9 @@ api.interceptors.response.use(
   }
 );
 
+=======
+  baseURL: "http://127.0.0.1:8000",
+});
+
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 export default api;

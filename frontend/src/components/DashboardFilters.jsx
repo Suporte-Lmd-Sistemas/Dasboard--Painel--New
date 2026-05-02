@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useEffect, useState } from "react";
 import "../styles/dashboard-filters.css";
 
@@ -54,12 +55,18 @@ function DashboardFilters({ onChange }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+=======
+import "../styles/dashboard-filters.css";
+
+function DashboardFilters() {
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
   return (
     <div className="dashboard-filters">
       <div className="filters-left">
         <div className="filter-title">Período:</div>
 
         <div className="filter-buttons">
+<<<<<<< HEAD
           <button
             type="button"
             className={`filter-btn ${period === "today" ? "active" : ""}`}
@@ -140,6 +147,16 @@ function DashboardFilters({ onChange }) {
             </div>
           </div>
         )}
+=======
+          <button className="filter-btn active">Hoje</button>
+          <button className="filter-btn">Ontem</button>
+          <button className="filter-btn">Esta Semana</button>
+          <button className="filter-btn">Este Mês</button>
+          <button className="filter-btn">Mês Anterior</button>
+          <button className="filter-btn">Este Ano</button>
+          <button className="filter-btn">Personalizado</button>
+        </div>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
       </div>
 
       <div className="filters-right">
@@ -147,6 +164,7 @@ function DashboardFilters({ onChange }) {
           Tipo:
         </label>
 
+<<<<<<< HEAD
         <select
           id="tipo"
           className="filter-select"
@@ -157,6 +175,13 @@ function DashboardFilters({ onChange }) {
           <option value="pedidos">Pedidos</option>
           <option value="clientes">Clientes</option>
           <option value="lucro">Lucro</option>
+=======
+        <select id="tipo" className="filter-select">
+          <option>Faturamento</option>
+          <option>Pedidos</option>
+          <option>Clientes</option>
+          <option>Lucro</option>
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
         </select>
       </div>
     </div>

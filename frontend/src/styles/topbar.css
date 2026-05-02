@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .topbar-shell {
   width: 100%;
   background: #f8fafc;
@@ -201,4 +202,31 @@
   .topbar-user-card {
     min-width: 100%;
   }
+=======
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.topbar-left h2 {
+  font-size: 24px;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.topbar-left p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.user-badge {
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }

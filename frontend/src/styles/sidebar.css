@@ -3,6 +3,7 @@
   height: 100vh;
   background: #f4f6f9;
   border-right: 1px solid #e5e7eb;
+<<<<<<< HEAD
   padding: 20px 14px;
   position: fixed;
   left: 0;
@@ -61,6 +62,25 @@
   text-decoration: none;
   transition: background 0.18s ease, color 0.18s ease;
   overflow: hidden;
+=======
+  padding: 20px;
+  position: fixed;
+}
+
+.logo {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.menu-item {
+  display: block;
+  padding: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+  color: #374151;
+  font-weight: 500;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
 
 .menu-item:hover {
@@ -69,6 +89,7 @@
 
 .menu-item.active {
   background: #4f8ef7;
+<<<<<<< HEAD
   color: #ffffff;
 }
 
@@ -108,14 +129,20 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+=======
+  color: white;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
 
 .submenu {
   margin-left: 10px;
   margin-bottom: 15px;
+<<<<<<< HEAD
   display: flex;
   flex-direction: column;
   gap: 6px;
+=======
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
 
 .submenu-item {
@@ -125,8 +152,12 @@
   cursor: pointer;
   border-radius: 20px;
   color: #374151;
+<<<<<<< HEAD
   text-decoration: none;
   transition: background 0.18s ease, color 0.18s ease, border 0.18s ease;
+=======
+  margin-bottom: 6px;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
 
 .submenu-item:hover {
@@ -134,6 +165,7 @@
 }
 
 .submenu-item-active {
+<<<<<<< HEAD
   background: #ffffff;
   border: 1px solid #93c5fd;
   color: #1d4ed8;
@@ -244,4 +276,10 @@
   .submenu-item {
     font-size: 14px;
   }
+=======
+  background: white;
+  border: 1px solid #93c5fd;
+  color: #1d4ed8;
+  font-weight: 600;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -133,3 +134,21 @@ export default function Topbar({
     </header>
   );
 }
+=======
+function Topbar({ titulo, caminho }) {
+  return (
+    <div className="topbar">
+      <div className="topbar-left">
+        <h2>{titulo}</h2>
+        <p>{caminho}</p>
+      </div>
+
+      <div className="topbar-right">
+        <div className="user-badge">USUÁRIO</div>
+      </div>
+    </div>
+  );
+}
+
+export default Topbar;
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f

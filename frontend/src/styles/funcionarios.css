@@ -209,6 +209,7 @@
   color: #b91c1c;
   border: 1px solid #fecaca;
   background: #fef2f2;
+<<<<<<< HEAD
 }
 
 .funcionario-vinculo-layout {
@@ -889,4 +890,6 @@
   .funcionario-detalhe-grid {
     grid-template-columns: 1fr;
   }
+=======
+>>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 }
