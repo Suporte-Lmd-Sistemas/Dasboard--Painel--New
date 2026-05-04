@@ -15,10 +15,11 @@
 .performance-kpi-card,
 .performance-soft-card,
 .mini-stat-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-main);
 }
 
 .performance-hero-content {
@@ -43,12 +44,12 @@
   margin: 0 0 10px;
   font-size: 30px;
   line-height: 1.1;
-  color: #0f172a;
+  color: var(--text-main);
 }
 
 .performance-subtitle {
   margin: 0;
-  color: #475569;
+  color: var(--text-muted);
   font-size: 14px;
   line-height: 1.75;
 }
@@ -74,7 +75,7 @@
 }
 
 .mini-stat-card strong {
-  color: #0f172a;
+  color: var(--text-main);
   font-size: 22px;
   line-height: 1.15;
 }
@@ -95,13 +96,13 @@
 
 .performance-panel-top h3 {
   margin: 0 0 4px;
-  color: #0f172a;
+  color: var(--text-main);
   font-size: 18px;
 }
 
 .performance-panel-top p {
   margin: 0;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 13px;
 }
 

@@ -57,7 +57,7 @@ class DashboardVendasRepository(BaseDashboardRepository):
                 ) AS VALOR,
                 COUNT(*) AS PEDIDOS
             FROM TB_PEDIDO_VENDA PV
-            WHERE PV.PEV_DT_LANCAMENTO >= DATEADD(-11 MONTH TO CURRENT_DATE)
+            WHERE PV.PEV_DT_LANCAMENTO >= DATEADD(-23 MONTH TO CURRENT_DATE)
               AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
               {empresa_sql}
             GROUP BY 1, 2
@@ -149,7 +149,6 @@ class DashboardVendasRepository(BaseDashboardRepository):
                AND PV.PEV_EMPRESA = PEVI.PEVI_EMPRESA
             LEFT JOIN TB_PRODUTO PR
                 ON PR.PRD_ID = PEVI.PEVI_PRODUTO
-               AND PR.PRD_EMPRESA = PEVI.PEVI_EMPRESA
             WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
               AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
               {empresa_item_sql}
@@ -158,7 +157,7 @@ class DashboardVendasRepository(BaseDashboardRepository):
                 PEVI.PEVI_PRODUTO,
                 COALESCE(NULLIF(TRIM(PR.PRD_DESCRICAO), ''), 'Produto sem descricao')
             ORDER BY VALOR DESC
-            ROWS 5
+            ROWS 10
         """
 
         params = {

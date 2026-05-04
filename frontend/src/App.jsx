@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import DashboardVendas from "./pages/DashboardVendas";
 import DashboardFinanceiro from "./pages/DashboardFinanceiro";
-import DashboardMultiEmpresa from "./pages/DashboardMultiEmpresa";
+import DashboardEstoque from "./pages/DashboardEstoque";
 import Relatorios from "./pages/Relatorios";
 import RelatoriosVendas from "./pages/RelatoriosVendas";
 import RelatorioPreviewPage from "./pages/RelatorioPreviewPage";
@@ -13,7 +13,6 @@ import RelatoriosDiversos from "./pages/RelatoriosDiversos";
 import Funcionarios from "./pages/Funcionarios";
 import FuncionarioNovoVinculo from "./pages/FuncionarioNovoVinculo";
 import FuncionarioAnalise from "./pages/FuncionarioAnalise";
-import FuncionarioDetalhe from "./pages/FuncionarioDetalhe";
 import Performance from "./pages/Performance";
 import PerformanceExclusoes from "./pages/PerformanceExclusoes";
 import PerformanceInclusoes from "./pages/PerformanceInclusoes";
@@ -21,14 +20,25 @@ import PerformanceAlteracoes from "./pages/PerformanceAlteracoes";
 import PerformanceCancelamentos from "./pages/PerformanceCancelamentos";
 import Login from "./pages/Login";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import BottomNavigation from "./components/BottomNavigation";
 
 function AppLayout() {
-  const [isMobileOrTablet, setIsMobileOrTablet] = useState(window.innerWidth <= 1024);
+  const [isMobileOrTablet, setIsMobileOrTablet] = useState(window.innerWidth <= 1200);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  function toggleTheme() {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  }
 
   useEffect(() => {
     function handleResize() {
-      const isResponsive = window.innerWidth <= 1024;
+      const isResponsive = window.innerWidth <= 1200;
       setIsMobileOrTablet(isResponsive);
 
       if (!isResponsive) {
@@ -53,18 +63,22 @@ function AppLayout() {
   const sharedLayoutProps = {
     onToggleSidebar: handleToggleSidebar,
     isMobileOrTablet,
+    theme,
+    toggleTheme,
   };
 
   return (
-    <div className="app-shell notranslate" translate="no">
-      <Sidebar
-        isMobileOrTablet={isMobileOrTablet}
-        isOpen={sidebarOpen}
-        onClose={handleCloseSidebar}
-      />
+    <div className={`app-shell notranslate ${isMobileOrTablet ? "mobile-mode" : ""}`} translate="no">
+      {!isMobileOrTablet && (
+        <Sidebar
+          isMobileOrTablet={isMobileOrTablet}
+          isOpen={sidebarOpen}
+          onClose={handleCloseSidebar}
+        />
+      )}
 
-      {isMobileOrTablet && sidebarOpen && (
-        <div className="sidebar-backdrop" onClick={handleCloseSidebar} />
+      {isMobileOrTablet && (
+        <BottomNavigation />
       )}
 
       <div className="app-content">
@@ -77,8 +91,8 @@ function AppLayout() {
             element={<DashboardFinanceiro {...sharedLayoutProps} />}
           />
           <Route
-            path="/dashboard/multiempresa"
-            element={<DashboardMultiEmpresa {...sharedLayoutProps} />}
+            path="/dashboard/estoque"
+            element={<DashboardEstoque {...sharedLayoutProps} />}
           />
 
           <Route path="/relatorios" element={<Relatorios {...sharedLayoutProps} />} />
@@ -111,10 +125,6 @@ function AppLayout() {
           <Route
             path="/funcionarios/:pes_id/analise"
             element={<FuncionarioAnalise {...sharedLayoutProps} />}
-          />
-          <Route
-            path="/funcionarios/:pes_id"
-            element={<FuncionarioDetalhe {...sharedLayoutProps} />}
           />
 
           <Route path="/performance" element={<Performance {...sharedLayoutProps} />} />

@@ -12,10 +12,7 @@ idna==3.11
 pillow==12.1.1
 pydantic==2.12.5
 pydantic_core==2.41.5
-<<<<<<< HEAD
-=======
 PyMySQL==1.1.2
->>>>>>> c57a7228d900d0db50b76e941e71cd9a3d700f4f
 reportlab==4.4.10
 SQLAlchemy==2.0.48
 starlette==0.52.1

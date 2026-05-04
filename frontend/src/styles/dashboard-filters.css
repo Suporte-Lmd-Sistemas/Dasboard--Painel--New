@@ -5,10 +5,11 @@
   gap: 20px;
   margin: 20px 0px 24px 0px;
   padding: 18px 20px;
-  border: 1px solid #e5eaf3;
+  border: 1px solid var(--border-color);
   border-radius: 20px;
-  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(12px);
 }
 
 .filters-left {
@@ -22,7 +23,7 @@
 .filter-title {
   font-size: 13px;
   font-weight: 700;
-  color: #475569;
+  color: var(--text-muted);
 }
 
 .filter-buttons {
@@ -34,10 +35,10 @@
 .filter-btn {
   height: 40px;
   padding: 0 16px;
-  border: 1px solid #dbe4f0;
+  border: 1px solid var(--border-color);
   border-radius: 999px;
-  background: #ffffff;
-  color: #334155;
+  background: var(--bg-card);
+  color: var(--text-muted);
   font-size: 13px;
   font-weight: 600;
   transition: all 0.2s ease;
@@ -66,17 +67,17 @@
 .filter-label {
   font-size: 13px;
   font-weight: 700;
-  color: #475569;
+  color: var(--text-muted);
 }
 
 .filter-select {
   height: 42px;
   min-width: 180px;
   padding: 0 14px;
-  border: 1px solid #dbe4f0;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--bg-card);
+  color: var(--text-main);
   font-size: 14px;
   font-weight: 500;
   outline: none;
@@ -98,9 +99,9 @@
   gap: 14px;
   margin-top: 4px;
   padding: 14px 16px;
-  border: 1px solid #dbe5f3;
+  border: 1px solid var(--border-color);
   border-radius: 16px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  background: var(--bg-card);
 }
 
 .custom-date-field {
@@ -119,10 +120,10 @@
 .custom-date-field input[type="date"] {
   height: 42px;
   padding: 0 12px;
-  border: 1px solid #cfd9e8;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--bg-card);
+  color: var(--text-main);
   font-size: 14px;
   font-weight: 500;
   outline: none;

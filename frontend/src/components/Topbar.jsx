@@ -38,6 +38,8 @@ export default function Topbar({
   caminho = "",
   onToggleSidebar = () => {},
   isMobileOrTablet = false,
+  theme = "light",
+  toggleTheme = () => {},
 }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -67,22 +69,9 @@ export default function Topbar({
     <header className="topbar-shell">
       <div className="topbar-main">
         <div className="topbar-title-area">
-          {isMobileOrTablet && (
-            <button
-              type="button"
-              className="topbar-menu-button"
-              onClick={onToggleSidebar}
-              aria-label="Abrir menu"
-            >
-              ☰
-            </button>
-          )}
-
           <div className="topbar-title-block">
             <div className="topbar-path">{caminho || `Olá ${primeiroNome}!`}</div>
-
             <h1 className="topbar-title">{titulo}</h1>
-
             <p className="topbar-subtitle">
               {subtitulo || `${saudacao}, ${primeiroNome}`}
             </p>
@@ -90,11 +79,32 @@ export default function Topbar({
         </div>
 
         <div className="topbar-actions">
-          <div className="topbar-company-group">
-            <label htmlFor="empresa-topbar" className="topbar-company-label">
-              Empresa ativa
-            </label>
+          <button 
+            type="button" 
+            onClick={toggleTheme} 
+            className="topbar-theme-toggle"
+            aria-label="Alternar tema"
+          >
+            {theme === "light" ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+              </svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+            )}
+          </button>
 
+          <div className="topbar-company-group">
             <select
               id="empresa-topbar"
               value={empresaAtual?.id || ""}
@@ -103,9 +113,8 @@ export default function Topbar({
               className="topbar-company-select"
             >
               <option value="">
-                {loadingEmpresas ? "Carregando empresas..." : "Selecione a empresa"}
+                {loadingEmpresas ? "..." : "Selecione a empresa"}
               </option>
-
               {empresas.map((empresa) => (
                 <option key={empresa.id} value={empresa.id}>
                   {empresa.nome_exibicao}
@@ -114,20 +123,21 @@ export default function Topbar({
             </select>
           </div>
 
-          <div className="topbar-user-card">
-            <div className="topbar-user-avatar">{iniciais}</div>
-
-            <div className="topbar-user-info">
-              <div className="topbar-user-name">{nomeUsuario}</div>
-              <div className="topbar-user-role">
-                {user?.perfil || "Usuário autenticado"}
+          <div className="topbar-user-section">
+            <div className="topbar-user-avatar" title={nomeUsuario}>{iniciais}</div>
+            {!isMobileOrTablet && (
+              <div className="topbar-user-info">
+                <div className="topbar-user-name">{primeiroNome}</div>
               </div>
-            </div>
+            )}
+            <button type="button" onClick={handleLogout} className="topbar-logout-icon" title="Sair">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+            </button>
           </div>
-
-          <button type="button" onClick={handleLogout} className="topbar-logout-button">
-            Sair
-          </button>
         </div>
       </div>
     </header>

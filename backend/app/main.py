@@ -17,6 +17,8 @@ from app.routes.dashboard_vendas import router as dashboard_vendas_router
 from app.routes.relatorio import router as relatorio_router
 from app.routes.auth import router as auth_router
 from app.routes.empresa import router as empresa_router
+from app.routes.departamentos import router as departamentos_router
+from app.routes.cargos import router as cargos_router
 from app.database.erp_connection import current_cnpj
 from app.core.security import decode_access_token
 from fastapi import Request
@@ -82,6 +84,8 @@ app.include_router(dashboard_vendas_router)
 app.include_router(relatorio_router)
 app.include_router(auth_router)
 app.include_router(empresa_router)
+app.include_router(departamentos_router)
+app.include_router(cargos_router)
 
 
 @app.get("/health", tags=["Sistema"])
@@ -135,6 +139,8 @@ def serve_frontend_spa(full_path: str):
         "dashboard_vendas",
         "relatorio",
         "empresa",
+        "departamentos",
+        "cargos",
     )
 
     if full_path.startswith(blocked_prefixes):

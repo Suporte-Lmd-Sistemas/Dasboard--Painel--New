@@ -516,35 +516,68 @@ function DashboardVendas({ onToggleSidebar, isMobileOrTablet }) {
         </div>
       </div>
 
-      <div className="table-box premium-box">
-        <div className="vendas-box-header">
-          <h3>Produtos mais Vendidos</h3>
+      <div className="two-columns">
+        <div className="table-box premium-box">
+          <div className="vendas-box-header">
+            <h3>Produtos mais Vendidos</h3>
+          </div>
+
+          {dashboardData.topProdutos.length ? (
+            <div className="table-responsive">
+              <table className="custom-table premium-table">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Qtd</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dashboardData.topProdutos.slice(0, 5).map((produto) => (
+                    <tr key={`${produto.produto}-${produto.valor}`}>
+                      <td>{produto.produto}</td>
+                      <td>{formatNumber(produto.quantidade)}</td>
+                      <td>{formatCurrency(produto.valor)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="empty-state">Sem dados.</div>
+          )}
         </div>
 
-        {dashboardData.topProdutos.length ? (
-          <div className="table-responsive">
-            <table className="custom-table premium-table">
-              <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Quantidade</th>
-                  <th>Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {dashboardData.topProdutos.map((produto) => (
-                  <tr key={`${produto.produto}-${produto.valor}`}>
-                    <td>{produto.produto}</td>
-                    <td>{formatNumber(produto.quantidade)}</td>
-                    <td>{formatCurrency(produto.valor)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="table-box premium-box">
+          <div className="vendas-box-header">
+            <h3>Top Clientes</h3>
           </div>
-        ) : (
-          <div className="empty-state">Nenhum produto encontrado no período.</div>
-        )}
+
+          {dashboardData.topClientes.length ? (
+            <div className="table-responsive">
+              <table className="custom-table premium-table">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Pedidos</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dashboardData.topClientes.slice(0, 5).map((cliente) => (
+                    <tr key={cliente.nome}>
+                      <td>{cliente.nome}</td>
+                      <td>{cliente.pedidos}</td>
+                      <td>{formatCurrency(cliente.valor)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="empty-state">Sem dados.</div>
+          )}
+        </div>
       </div>
 
       <div className="two-columns">

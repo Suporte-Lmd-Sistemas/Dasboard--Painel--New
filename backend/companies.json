@@ -1,7 +1,7 @@
 [
   {
     "cnpj": "46512675000110",
-    "razao_social": "RR IMPERIO",
+    "razao_social": "Real Acabamentos",
     "db_path": "C:\\DATAGOO CLIENTES\\Clientes Firebird 3\\Dados\\real\\DADOS.FDB",
     "port": 3050,
     "user": "SYSDBA",
@@ -9,9 +9,17 @@
   },
   {
     "cnpj": "57153867000102",
-    "razao_social": "GELA GUELA",
+    "razao_social": "Pizzaria do Russo",
     "db_path": "C:\\DATAGOO CLIENTES\\Clientes Firebird 3\\Dados\\russo\\DADOS.FDB",
     "port": 3050,
+    "user": "SYSDBA",
+    "pass": "masterkey"
+  },
+  {
+    "cnpj": "58253989000125",
+    "razao_social": "RR Imperio Atacarejo",
+    "db_path": "C:\\DATAGOO CLIENTES\\Clientes Firebird 5\\Dados\\rrimperio\\DADOS.FDB",
+    "port": 3053,
     "user": "SYSDBA",
     "pass": "masterkey"
   }

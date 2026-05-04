@@ -1,4 +1,4 @@
-﻿import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function FuncionarioCard({ funcionario }) {
   const navigate = useNavigate();
@@ -19,14 +19,6 @@ function FuncionarioCard({ funcionario }) {
     navigate(`/funcionarios/${funcionarioId}/analise`);
   }
 
-  function abrirDetalhe() {
-    if (!funcionarioId) {
-      alert("Funcionário inválido para detalhamento.");
-      return;
-    }
-
-    navigate(`/funcionarios/${funcionarioId}`);
-  }
 
   return (
     <div className="funcionario-card">
@@ -55,13 +47,6 @@ function FuncionarioCard({ funcionario }) {
           <span className="tag tag-gray">Colaborador</span>
         )}
 
-        <button
-          type="button"
-          className="tag-button tag-button-gray"
-          onClick={abrirDetalhe}
-        >
-          Detalhe
-        </button>
 
         <button
           type="button"
