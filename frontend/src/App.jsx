@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import DashboardVendas from "./pages/DashboardVendas";
 import DashboardFinanceiro from "./pages/DashboardFinanceiro";
 import DashboardEstoque from "./pages/DashboardEstoque";
+import DashboardFiliais from "./pages/DashboardFiliais";
 import Relatorios from "./pages/Relatorios";
 import RelatoriosVendas from "./pages/RelatoriosVendas";
 import RelatorioPreviewPage from "./pages/RelatorioPreviewPage";
@@ -93,6 +94,10 @@ function AppLayout() {
           <Route
             path="/dashboard/estoque"
             element={<DashboardEstoque {...sharedLayoutProps} />}
+          />
+          <Route
+            path="/dashboard/filiais"
+            element={<DashboardFiliais {...sharedLayoutProps} />}
           />
 
           <Route path="/relatorios" element={<Relatorios {...sharedLayoutProps} />} />

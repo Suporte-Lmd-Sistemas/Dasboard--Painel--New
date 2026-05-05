@@ -519,7 +519,7 @@ function DashboardVendas({ onToggleSidebar, isMobileOrTablet }) {
       <div className="two-columns">
         <div className="table-box premium-box">
           <div className="vendas-box-header">
-            <h3>Produtos mais Vendidos</h3>
+            <h3>Produtos mais Vendidos (1-5)</h3>
           </div>
 
           {dashboardData.topProdutos.length ? (
@@ -534,7 +534,7 @@ function DashboardVendas({ onToggleSidebar, isMobileOrTablet }) {
                 </thead>
                 <tbody>
                   {dashboardData.topProdutos.slice(0, 5).map((produto) => (
-                    <tr key={`${produto.produto}-${produto.valor}`}>
+                    <tr key={`left-${produto.produto}-${produto.valor}`}>
                       <td>{produto.produto}</td>
                       <td>{formatNumber(produto.quantidade)}</td>
                       <td>{formatCurrency(produto.valor)}</td>
@@ -548,6 +548,39 @@ function DashboardVendas({ onToggleSidebar, isMobileOrTablet }) {
           )}
         </div>
 
+        <div className="table-box premium-box">
+          <div className="vendas-box-header">
+            <h3>Produtos mais Vendidos (6-10)</h3>
+          </div>
+
+          {dashboardData.topProdutos.length > 5 ? (
+            <div className="table-responsive">
+              <table className="custom-table premium-table">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Qtd</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dashboardData.topProdutos.slice(5, 10).map((produto) => (
+                    <tr key={`right-${produto.produto}-${produto.valor}`}>
+                      <td>{produto.produto}</td>
+                      <td>{formatNumber(produto.quantidade)}</td>
+                      <td>{formatCurrency(produto.valor)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="empty-state">Sem mais produtos.</div>
+          )}
+        </div>
+      </div>
+
+      <div className="two-columns">
         <div className="table-box premium-box">
           <div className="vendas-box-header">
             <h3>Top Clientes</h3>
@@ -569,6 +602,37 @@ function DashboardVendas({ onToggleSidebar, isMobileOrTablet }) {
                       <td>{cliente.nome}</td>
                       <td>{cliente.pedidos}</td>
                       <td>{formatCurrency(cliente.valor)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="empty-state">Sem dados.</div>
+          )}
+        </div>
+
+        <div className="table-box premium-box">
+          <div className="vendas-box-header">
+            <h3>Top Vendedores</h3>
+          </div>
+
+          {dashboardData.vendasPorVendedor.length ? (
+            <div className="table-responsive">
+              <table className="custom-table premium-table">
+                <thead>
+                  <tr>
+                    <th>Vendedor</th>
+                    <th>Pedidos</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dashboardData.vendasPorVendedor.slice(0, 5).map((vendedor) => (
+                    <tr key={vendedor.vendedor}>
+                      <td>{vendedor.vendedor}</td>
+                      <td>{vendedor.pedidos}</td>
+                      <td>{formatCurrency(vendedor.valor)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -688,84 +752,6 @@ function DashboardVendas({ onToggleSidebar, isMobileOrTablet }) {
         </div>
       </div>
 
-      <div className="two-columns">
-        <div className="chart-box premium-box">
-          <div className="vendas-box-header">
-            <h3>Top Clientes</h3>
-          </div>
-
-          {dashboardData.topClientes.length ? (
-            <div className="vendas-ranking-list">
-              {dashboardData.topClientes.map((cliente) => {
-                const width = (Number(cliente.valor || 0) / maxClienteValor) * 100;
-
-                return (
-                  <div className="vendas-ranking-item" key={cliente.nome}>
-                    <div className="vendas-ranking-top">
-                      <div className="vendas-ranking-main">
-                        <strong>{cliente.nome}</strong>
-                        <span>{formatNumber(cliente.pedidos)} pedidos</span>
-                      </div>
-                      <div className="vendas-ranking-value">
-                        {formatCurrency(cliente.valor)}
-                      </div>
-                    </div>
-
-                    <div className="vendas-progress-track">
-                      <div
-                        className="vendas-progress-fill blue"
-                        style={{ width: `${width}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="empty-state">Nenhum cliente encontrado no período.</div>
-          )}
-        </div>
-
-        <div className="chart-box premium-box">
-          <div className="vendas-box-header">
-            <h3>Vendas por Vendedor</h3>
-          </div>
-
-          {dashboardData.vendasPorVendedor.length ? (
-            <div className="vendas-ranking-list">
-              {dashboardData.vendasPorVendedor.map((vendedor) => {
-                const width = (Number(vendedor.valor || 0) / maxVendedorValor) * 100;
-
-                return (
-                  <div
-                    className="vendas-ranking-item"
-                    key={`${vendedor.vendedor}-${vendedor.valor}`}
-                  >
-                    <div className="vendas-ranking-top">
-                      <div className="vendas-ranking-main">
-                        <strong>{vendedor.vendedor}</strong>
-                        <span>{formatNumber(vendedor.pedidos)} pedidos</span>
-                      </div>
-                      <div className="vendas-ranking-value">
-                        {formatCurrency(vendedor.valor)}
-                      </div>
-                    </div>
-
-                    <div className="vendas-progress-track">
-                      <div
-                        className="vendas-progress-fill green"
-                        style={{ width: `${width}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="empty-state">Nenhum vendedor encontrado no período.</div>
-          )}
-        </div>
-      </div>
 
       <div className="chart-box premium-box">
         <div className="vendas-box-header">

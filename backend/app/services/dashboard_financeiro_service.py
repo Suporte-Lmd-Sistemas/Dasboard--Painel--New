@@ -25,11 +25,7 @@ class DashboardFinanceiroService(BaseDashboardService):
             date_range, empresa_id, report_type
         )
 
-        total_vencido = (
-            self.repository.get_total_receber_vencido(empresa_id, report_type)
-            if report_type == "aberto"
-            else 0
-        )
+        total_vencido = self.repository.get_total_receber_vencido(empresa_id, report_type)
 
         recuperado_mes = self.repository.get_total_recebido_periodo(
             date_range, empresa_id, report_type
@@ -72,7 +68,7 @@ class DashboardFinanceiroService(BaseDashboardService):
             },
             "inadimplencia": {
                 "taxa": round((total_vencido / contas_receber_total) * 100, 1)
-                if contas_receber_total and report_type == "aberto"
+                if contas_receber_total
                 else 0,
                 "totalVencido": total_vencido,
                 "totalReceber": contas_receber_total,

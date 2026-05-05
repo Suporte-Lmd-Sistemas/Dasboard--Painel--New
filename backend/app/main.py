@@ -14,6 +14,8 @@ from app.routes.indicadores import router as indicadores_router
 from app.routes.performance import router as performance_router
 from app.routes.dashboard_financeiro import router as dashboard_financeiro_router
 from app.routes.dashboard_vendas import router as dashboard_vendas_router
+from app.routes.dashboard_estoque import router as dashboard_estoque_router
+from app.routes.dashboard_filiais import router as dashboard_filiais_router
 from app.routes.relatorio import router as relatorio_router
 from app.routes.auth import router as auth_router
 from app.routes.empresa import router as empresa_router
@@ -81,6 +83,8 @@ app.include_router(indicadores_router)
 app.include_router(performance_router)
 app.include_router(dashboard_financeiro_router)
 app.include_router(dashboard_vendas_router)
+app.include_router(dashboard_estoque_router)
+app.include_router(dashboard_filiais_router)
 app.include_router(relatorio_router)
 app.include_router(auth_router)
 app.include_router(empresa_router)
@@ -137,6 +141,7 @@ def serve_frontend_spa(full_path: str):
         "performance",
         "dashboard_financeiro",
         "dashboard_vendas",
+        "dashboard_estoque",
         "relatorio",
         "empresa",
         "departamentos",

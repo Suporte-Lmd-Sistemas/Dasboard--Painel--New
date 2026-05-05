@@ -22,5 +22,13 @@
     "port": 3053,
     "user": "SYSDBA",
     "pass": "masterkey"
+  },
+  {
+    "cnpj": "49912180000177",
+    "razao_social": "RR Auto Pecas",
+    "db_path": "C:\\DATAGOO CLIENTES\\Clientes Firebird 5\\Dados\\rrimperio\\DADOS.FDB",
+    "port": 3053,
+    "user": "SYSDBA",
+    "pass": "masterkey"
   }
 ]

@@ -14,8 +14,8 @@ class DashboardVendasRepository(BaseDashboardRepository):
                 0
             ) AS TOTAL
             FROM TB_PEDIDO_VENDA PV
-            WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
+            WHERE PV.PEV_DT_FATURAMENTO BETWEEN :start_date AND :end_date
+              AND PV.PEV_STATUS = 'F'
               {empresa_sql}
         """
 
@@ -33,7 +33,6 @@ class DashboardVendasRepository(BaseDashboardRepository):
             SELECT COUNT(*) AS TOTAL
             FROM TB_PEDIDO_VENDA PV
             WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
               {empresa_sql}
         """
 
@@ -49,16 +48,15 @@ class DashboardVendasRepository(BaseDashboardRepository):
 
         sql = f"""
             SELECT
-                EXTRACT(YEAR FROM PV.PEV_DT_LANCAMENTO) AS ANO,
-                EXTRACT(MONTH FROM PV.PEV_DT_LANCAMENTO) AS MES,
+                EXTRACT(YEAR FROM PV.pev_dt_emissao) AS ANO,
+                EXTRACT(MONTH FROM PV.pev_dt_emissao) AS MES,
                 COALESCE(
                     SUM(CAST(COALESCE(PV.PEV_VALOR_TOTAL, 0) AS NUMERIC(18,2))),
                     0
                 ) AS VALOR,
                 COUNT(*) AS PEDIDOS
             FROM TB_PEDIDO_VENDA PV
-            WHERE PV.PEV_DT_LANCAMENTO >= DATEADD(-23 MONTH TO CURRENT_DATE)
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
+            WHERE PV.pev_dt_emissao >= DATEADD(-23 MONTH TO CURRENT_DATE)
               {empresa_sql}
             GROUP BY 1, 2
             ORDER BY 1, 2
@@ -96,9 +94,8 @@ class DashboardVendasRepository(BaseDashboardRepository):
                 ON C.CLI_PESSOA = PV.PEV_CLIENTE
             INNER JOIN TB_PESSOA P
                 ON P.PES_ID = C.CLI_PESSOA
-            WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
+            WHERE PV.PEV_DT_EMISSAO BETWEEN :start_date AND :end_date
               AND PV.PEV_CLIENTE IS NOT NULL
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
               {empresa_sql}
             GROUP BY
                 PV.PEV_CLIENTE,
@@ -149,8 +146,8 @@ class DashboardVendasRepository(BaseDashboardRepository):
                AND PV.PEV_EMPRESA = PEVI.PEVI_EMPRESA
             LEFT JOIN TB_PRODUTO PR
                 ON PR.PRD_ID = PEVI.PEVI_PRODUTO
-            WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
+            WHERE PV.PEV_DT_FATURAMENTO BETWEEN :start_date AND :end_date
+              AND PV.PEV_STATUS = 'F'
               {empresa_item_sql}
               {empresa_pedido_sql}
             GROUP BY
@@ -192,9 +189,8 @@ class DashboardVendasRepository(BaseDashboardRepository):
                 ON P.PES_ID = C.CLI_PESSOA
             LEFT JOIN TB_CIDADE CID
                 ON CID.CID_ID = P.PES_CIDADE
-            WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
+            WHERE PV.PEV_DT_EMISSAO BETWEEN :start_date AND :end_date
               AND PV.PEV_CLIENTE IS NOT NULL
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
               {empresa_sql}
             GROUP BY CID.CID_NOME
             ORDER BY QUANTIDADE DESC
@@ -235,8 +231,8 @@ class DashboardVendasRepository(BaseDashboardRepository):
             FROM TB_PEDIDO_VENDA PV
             LEFT JOIN TB_PESSOA P
                 ON P.PES_ID = PV.PEV_VENDEDOR
-            WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
+            WHERE PV.PEV_DT_FATURAMENTO BETWEEN :start_date AND :end_date
+              AND PV.PEV_STATUS = 'F'
               AND PV.PEV_VENDEDOR IS NOT NULL
               {empresa_sql}
             GROUP BY
@@ -282,11 +278,10 @@ class DashboardVendasRepository(BaseDashboardRepository):
                AND PV.PEV_EMPRESA = PEVI.PEVI_EMPRESA
             LEFT JOIN TB_PRODUTO PR
                 ON PR.PRD_ID = PEVI.PEVI_PRODUTO
-               AND PR.PRD_EMPRESA = PEVI.PEVI_EMPRESA
             LEFT JOIN TB_PROD_GRUPO PG
                 ON PG.PGRU_ID = PR.PRD_GRUPO
-            WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
+            WHERE PV.PEV_DT_FATURAMENTO BETWEEN :start_date AND :end_date
+              AND PV.PEV_STATUS = 'F'
               {empresa_item_sql}
               {empresa_pedido_sql}
             GROUP BY
@@ -333,11 +328,10 @@ class DashboardVendasRepository(BaseDashboardRepository):
                AND PV.PEV_EMPRESA = PEVI.PEVI_EMPRESA
             LEFT JOIN TB_PRODUTO PR
                 ON PR.PRD_ID = PEVI.PEVI_PRODUTO
-               AND PR.PRD_EMPRESA = PEVI.PEVI_EMPRESA
             LEFT JOIN TB_PROD_MARCA PM
                 ON PM.PMAR_ID = PR.PRD_MARCA
-            WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
+            WHERE PV.PEV_DT_FATURAMENTO BETWEEN :start_date AND :end_date
+              AND PV.PEV_STATUS = 'F'
               {empresa_item_sql}
               {empresa_pedido_sql}
             GROUP BY
@@ -381,7 +375,7 @@ class DashboardVendasRepository(BaseDashboardRepository):
                 COUNT(*) AS PEDIDOS
             FROM TB_PEDIDO_VENDA PV
             WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
+              AND PV.PEV_STATUS <> 'C'
               {empresa_sql}
             GROUP BY 1
             ORDER BY 1
@@ -409,12 +403,12 @@ class DashboardVendasRepository(BaseDashboardRepository):
 
         sql = f"""
             SELECT
-                EXTRACT(WEEKDAY FROM PV.PEV_DT_LANCAMENTO) AS DIA_NUM,
+                EXTRACT(WEEKDAY FROM PV.PEV_DT_EMISSAO) AS DIA_NUM,
                 AVG(CAST(COALESCE(PV.PEV_VALOR_TOTAL, 0) AS NUMERIC(18,2))) AS VALOR,
                 COUNT(*) AS PEDIDOS
             FROM TB_PEDIDO_VENDA PV
-            WHERE PV.PEV_DT_LANCAMENTO BETWEEN :start_date AND :end_date
-              AND COALESCE(PV.PEV_STATUS, '') <> 'CANCELADO'
+            WHERE PV.PEV_DT_EMISSAO BETWEEN :start_date AND :end_date
+              AND PV.PEV_STATUS <> 'C'
               {empresa_sql}
             GROUP BY 1
             ORDER BY 1

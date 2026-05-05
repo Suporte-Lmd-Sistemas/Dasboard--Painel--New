@@ -29,8 +29,8 @@ def login(payload: dict):
         # -------------------------------------------------------------
         import requests
         try:
-            central_api_url = "http://127.0.0.1:3000/api/license/validate"
-            response = requests.post(central_api_url, json={"cnpj": cnpj_value}, timeout=5)
+            central_api_url = "http://127.0.0.1:3001/api/license/validate"
+            response = requests.post(central_api_url, json={"cnpj": cnpj_value, "login": login_value}, timeout=5)
             license_data = response.json()
             
             if not license_data.get("valid"):

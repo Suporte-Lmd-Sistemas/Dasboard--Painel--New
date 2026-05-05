@@ -86,20 +86,22 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
         valor_aberto_sql = self._receber_valor_aberto_sql(alias, "CURRENT_DATE")
 
         if report_type == "faturado":
+            # Faturado = quanto já foi recebido (pago) no período
             valor_sql = (
                 f"(CAST(COALESCE({alias}.REC_VALOR, 0) AS NUMERIC(18,2)) - ({valor_aberto_sql}))"
             )
-            filtro_sql = f"COALESCE({alias}.REC_STATUS, '') IN ('PB', 'BX')"
-            data_sql = f"{alias}.REC_DT_EMISSAO BETWEEN :start_date AND :end_date"
+            filtro_sql = f"COALESCE({alias}.REC_STATUS, '') = 'BX'"
+            data_sql = f"{alias}.REC_DT_VENCIMENTO BETWEEN :start_date AND :end_date"
         else:
+            # Aberto = saldo ainda a receber, com vencimento no período
             valor_sql = valor_aberto_sql
-            filtro_sql = f"COALESCE({alias}.REC_STATUS, '') IN ('AB', 'PB')"
-            data_sql = f"{alias}.REC_DT_EMISSAO BETWEEN :start_date AND :end_date"
+            filtro_sql = f"COALESCE({alias}.REC_STATUS, '') IN ('AB', 'NG')"
+            data_sql = f"{alias}.REC_DT_VENCIMENTO BETWEEN :start_date AND :end_date"
 
         return valor_sql, filtro_sql, data_sql
 
     def _pagar_metric_sql(self, alias: str, report_type: str) -> tuple[str, str, str]:
-        valor_aberto_sql = self._pagamento_valor_aberto_sql(alias, ":end_date")
+        valor_aberto_sql = self._pagamento_valor_aberto_sql(alias, "CURRENT_DATE")
 
         if report_type == "faturado":
             valor_sql = (
@@ -125,19 +127,29 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
         report_type: str,
     ) -> float:
         empresa_sql, empresa_params = self._empresa_filter("R.REC_EMPRESA", empresa_id)
-        valor_sql, filtro_sql, data_sql = self._receber_metric_sql("R", report_type)
 
-        sql = f"""
-            SELECT COALESCE(
-                SUM(CAST({valor_sql} AS NUMERIC(18,2))),
-                0
-            ) AS TOTAL
-            FROM TB_RECEBIMENTO R
-            WHERE {data_sql}
-              AND COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
-              AND {filtro_sql}
-              {empresa_sql}
-        """
+        if report_type == "faturado":
+            sql = f"""
+                SELECT COALESCE(SUM(CAST(RIT.RIT_VALOR AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_RECEBIMENTO_ITEM RIT
+                INNER JOIN TB_RECEBIMENTO R ON R.REC_ID = RIT.RIT_RECEBIMENTO AND R.REC_EMPRESA = RIT.RIT_EMPRESA
+                WHERE RIT.RIT_ACAO = 'RC'
+                  AND RIT.RIT_DT_ACAO BETWEEN :start_date AND :end_date
+                  AND COALESCE(R.REC_STATUS, '') = 'BX'
+                  AND COALESCE(R.REC_TIPO, '') <> 'AV'
+                  {empresa_sql.replace("R.REC_EMPRESA", "RIT.RIT_EMPRESA")}
+            """
+        else:
+            valor_sql, filtro_sql, data_sql = self._receber_metric_sql("R", report_type)
+            sql = f"""
+                SELECT COALESCE(SUM(CAST({valor_sql} AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_RECEBIMENTO R
+                WHERE {data_sql}
+                  AND COALESCE(R.REC_STATUS, '') <> 'CN'
+                  AND COALESCE(R.REC_TIPO, '') <> 'AV'
+                  AND {filtro_sql}
+                  {empresa_sql}
+            """
 
         params = {
             "start_date": date_range.start,
@@ -153,19 +165,28 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
         report_type: str,
     ) -> float:
         empresa_sql, empresa_params = self._empresa_filter("P.PAG_EMPRESA", empresa_id)
-        valor_sql, filtro_sql, data_sql = self._pagar_metric_sql("P", report_type)
 
-        sql = f"""
-            SELECT COALESCE(
-                SUM(CAST({valor_sql} AS NUMERIC(18,2))),
-                0
-            ) AS TOTAL
-            FROM TB_PAGAMENTO P
-            WHERE {data_sql}
-              AND COALESCE(P.PAG_STATUS, '') <> 'CANCELADO'
-              AND {filtro_sql}
-              {empresa_sql}
-        """
+        if report_type == "faturado":
+            sql = f"""
+                SELECT COALESCE(SUM(CAST(PIT.PIT_VALOR AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_PAGAMENTO_ITEM PIT
+                INNER JOIN TB_PAGAMENTO P ON P.PAG_ID = PIT.PIT_PAGAMENTO AND P.PAG_EMPRESA = PIT.PIT_EMPRESA
+                WHERE PIT.PIT_ACAO = 'PG'
+                  AND PIT.PIT_DT_ACAO BETWEEN :start_date AND :end_date
+                  AND COALESCE(P.PAG_STATUS, '') = 'BX'
+                  AND COALESCE(P.PAG_TIPO, '') <> 'AV'
+                  {empresa_sql.replace("P.PAG_EMPRESA", "PIT.PIT_EMPRESA")}
+            """
+        else:
+            valor_sql, filtro_sql, data_sql = self._pagar_metric_sql("P", report_type)
+            sql = f"""
+                SELECT COALESCE(SUM(CAST({valor_sql} AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_PAGAMENTO P
+                WHERE {data_sql}
+                  AND COALESCE(P.PAG_STATUS, '') <> 'CN'
+                  AND {filtro_sql}
+                  {empresa_sql}
+            """
 
         params = {
             "start_date": date_range.start,
@@ -191,8 +212,8 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
                 0
             ) AS TOTAL
             FROM TB_RECEBIMENTO R
-            WHERE COALESCE(R.REC_STATUS, '') IN ('AB', 'PB')
-              AND COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
+            WHERE COALESCE(R.REC_STATUS, '') IN ('AB', 'NG')
+              AND COALESCE(R.REC_TIPO, '') <> 'AV'
               AND R.REC_DT_VENCIMENTO < CURRENT_DATE
               AND CAST({valor_aberto_sql} AS NUMERIC(18,2)) > 0
               {empresa_sql}
@@ -207,26 +228,38 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
         report_type: str,
     ) -> float:
         empresa_sql, empresa_params = self._empresa_filter("R.REC_EMPRESA", empresa_id)
-        valor_aberto_sql = self._receber_valor_aberto_sql("R", "CURRENT_DATE")
 
-        sql = f"""
-            SELECT COALESCE(
-                SUM(
-                    CAST(
-                        (
-                            CAST(COALESCE(R.REC_VALOR, 0) AS NUMERIC(18,2)) -
-                            CAST({valor_aberto_sql} AS NUMERIC(18,2))
-                        ) AS NUMERIC(18,2)
-                    )
-                ),
-                0
-            ) AS TOTAL
-            FROM TB_RECEBIMENTO R
-            WHERE R.REC_DT_EMISSAO BETWEEN :start_date AND :end_date
-              AND COALESCE(R.REC_STATUS, '') IN ('PB', 'BX')
-              AND COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
-              {empresa_sql}
-        """
+        if report_type == "faturado":
+            sql = f"""
+                SELECT COALESCE(SUM(CAST(RIT.RIT_VALOR AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_RECEBIMENTO_ITEM RIT
+                INNER JOIN TB_RECEBIMENTO R ON R.REC_ID = RIT.RIT_RECEBIMENTO AND R.REC_EMPRESA = RIT.RIT_EMPRESA
+                WHERE RIT.RIT_ACAO = 'RC'
+                  AND RIT.RIT_DT_ACAO BETWEEN :start_date AND :end_date
+                  AND COALESCE(R.REC_STATUS, '') = 'BX'
+                  AND COALESCE(R.REC_TIPO, '') <> 'AV'
+                  {empresa_sql.replace("R.REC_EMPRESA", "RIT.RIT_EMPRESA")}
+            """
+        else:
+            valor_aberto_sql = self._receber_valor_aberto_sql("R", "CURRENT_DATE")
+            sql = f"""
+                SELECT COALESCE(
+                    SUM(
+                        CAST(
+                            (
+                                CAST(COALESCE(R.REC_VALOR, 0) AS NUMERIC(18,2)) -
+                                CAST({valor_aberto_sql} AS NUMERIC(18,2))
+                            ) AS NUMERIC(18,2)
+                        )
+                    ),
+                    0
+                ) AS TOTAL
+                FROM TB_RECEBIMENTO R
+                WHERE R.REC_DT_VENCIMENTO BETWEEN :start_date AND :end_date
+                  AND COALESCE(R.REC_STATUS, '') = 'BX'
+                  AND COALESCE(R.REC_TIPO, '') <> 'AV'
+                  {empresa_sql}
+            """
 
         params = {
             "start_date": date_range.start,
@@ -242,26 +275,38 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
         report_type: str,
     ) -> float:
         empresa_sql, empresa_params = self._empresa_filter("P.PAG_EMPRESA", empresa_id)
-        valor_aberto_sql = self._pagamento_valor_aberto_sql("P", ":end_date")
 
-        sql = f"""
-            SELECT COALESCE(
-                SUM(
-                    CAST(
-                        (
-                            CAST(COALESCE(P.PAG_VALOR, 0) AS NUMERIC(18,2)) -
-                            CAST({valor_aberto_sql} AS NUMERIC(18,2))
-                        ) AS NUMERIC(18,2)
-                    )
-                ),
-                0
-            ) AS TOTAL
-            FROM TB_PAGAMENTO P
-            WHERE P.PAG_DT_VENCIMENTO BETWEEN :start_date AND :end_date
-              AND COALESCE(P.PAG_STATUS, '') IN ('PB', 'BX')
-              AND COALESCE(P.PAG_STATUS, '') <> 'CANCELADO'
-              {empresa_sql}
-        """
+        if report_type == "faturado":
+            sql = f"""
+                SELECT COALESCE(SUM(CAST(PIT.PIT_VALOR AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_PAGAMENTO_ITEM PIT
+                INNER JOIN TB_PAGAMENTO P ON P.PAG_ID = PIT.PIT_PAGAMENTO AND P.PAG_EMPRESA = PIT.PIT_EMPRESA
+                WHERE PIT.PIT_ACAO = 'PG'
+                  AND PIT.PIT_DT_ACAO BETWEEN :start_date AND :end_date
+                  AND COALESCE(P.PAG_STATUS, '') = 'BX'
+                  AND COALESCE(P.PAG_TIPO, '') <> 'AV'
+                  {empresa_sql.replace("P.PAG_EMPRESA", "PIT.PIT_EMPRESA")}
+            """
+        else:
+            valor_aberto_sql = self._pagamento_valor_aberto_sql("P", ":end_date")
+            sql = f"""
+                SELECT COALESCE(
+                    SUM(
+                        CAST(
+                            (
+                                CAST(COALESCE(P.PAG_VALOR, 0) AS NUMERIC(18,2)) -
+                                CAST({valor_aberto_sql} AS NUMERIC(18,2))
+                            ) AS NUMERIC(18,2)
+                        )
+                    ),
+                    0
+                ) AS TOTAL
+                FROM TB_PAGAMENTO P
+                WHERE P.PAG_DT_VENCIMENTO BETWEEN :start_date AND :end_date
+                  AND COALESCE(P.PAG_STATUS, '') IN ('BX')
+                  AND COALESCE(P.PAG_STATUS, '') <> 'CN'
+                  {empresa_sql}
+            """
 
         params = {
             "start_date": date_range.start,
@@ -291,7 +336,7 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
             sql = f"""
                 SELECT COUNT(*) AS TOTAL
                 FROM TB_PAGAMENTO P
-                WHERE COALESCE(P.PAG_STATUS, '') <> 'CANCELADO'
+                WHERE COALESCE(P.PAG_STATUS, '') <> 'CN'
                   AND {filtro_sql}
                   AND CAST({valor_sql} AS NUMERIC(18,2)) > 0
                   {empresa_sql}
@@ -305,7 +350,7 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
             FROM TB_PAGAMENTO P
             WHERE P.PAG_DT_VENCIMENTO BETWEEN CURRENT_DATE AND DATEADD(7 DAY TO CURRENT_DATE)
               AND COALESCE(P.PAG_STATUS, '') IN ('AB', 'PB')
-              AND COALESCE(P.PAG_STATUS, '') <> 'CANCELADO'
+              AND COALESCE(P.PAG_STATUS, '') <> 'CN'
               AND CAST({valor_aberto_sql} AS NUMERIC(18,2)) > 0
               {empresa_sql}
         """
@@ -332,7 +377,8 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
             ) AS TOTAL
             FROM TB_RECEBIMENTO R
             WHERE {data_sql}
-              AND COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
+              AND COALESCE(R.REC_STATUS, '') <> 'CN'
+              AND COALESCE(R.REC_TIPO, '') <> 'CR'
               AND {filtro_sql}
               {empresa_sql}
         """
@@ -352,24 +398,39 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
         report_type: str,
     ) -> list[int]:
         empresa_sql, empresa_params = self._empresa_filter("R.REC_EMPRESA", empresa_id)
-        valor_sql, filtro_sql, _ = self._receber_metric_sql("R", report_type)
 
-        sql = f"""
-            SELECT
-                EXTRACT(YEAR FROM R.REC_DT_EMISSAO) AS ANO,
-                EXTRACT(MONTH FROM R.REC_DT_EMISSAO) AS MES,
-                COALESCE(
-                    SUM(CAST({valor_sql} AS NUMERIC(18,2))),
-                    0
-                ) AS TOTAL
-            FROM TB_RECEBIMENTO R
-            WHERE R.REC_DT_EMISSAO >= DATEADD(-11 MONTH TO CURRENT_DATE)
-              AND COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
-              AND {filtro_sql}
-              {empresa_sql}
-            GROUP BY 1, 2
-            ORDER BY 1, 2
-        """
+        if report_type == "faturado":
+            sql = f"""
+                SELECT
+                    EXTRACT(YEAR FROM RIT.RIT_DT_ACAO) AS ANO,
+                    EXTRACT(MONTH FROM RIT.RIT_DT_ACAO) AS MES,
+                    COALESCE(SUM(CAST(RIT.RIT_VALOR AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_RECEBIMENTO_ITEM RIT
+                INNER JOIN TB_RECEBIMENTO R ON R.REC_ID = RIT.RIT_RECEBIMENTO AND R.REC_EMPRESA = RIT.RIT_EMPRESA
+                WHERE RIT.RIT_ACAO = 'RC'
+                  AND RIT.RIT_DT_ACAO >= DATEADD(-11 MONTH TO CURRENT_DATE)
+                  AND COALESCE(R.REC_STATUS, '') = 'BX'
+                  AND COALESCE(R.REC_TIPO, '') <> 'AV'
+                  {empresa_sql.replace("R.REC_EMPRESA", "RIT.RIT_EMPRESA")}
+                GROUP BY 1, 2
+                ORDER BY 1, 2
+            """
+        else:
+            valor_sql, filtro_sql, _ = self._receber_metric_sql("R", report_type)
+            sql = f"""
+                SELECT
+                    EXTRACT(YEAR FROM R.REC_DT_VENCIMENTO) AS ANO,
+                    EXTRACT(MONTH FROM R.REC_DT_VENCIMENTO) AS MES,
+                    COALESCE(SUM(CAST({valor_sql} AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_RECEBIMENTO R
+                WHERE R.REC_DT_VENCIMENTO >= DATEADD(-11 MONTH TO CURRENT_DATE)
+                  AND COALESCE(R.REC_STATUS, '') <> 'CN'
+                  AND COALESCE(R.REC_TIPO, '') <> 'AV'
+                  AND {filtro_sql}
+                  {empresa_sql}
+                GROUP BY 1, 2
+                ORDER BY 1, 2
+            """
 
         rows = self._fetch_all(sql, empresa_params)
         return [self._safe_int(row.get("TOTAL")) for row in rows][-12:]
@@ -382,31 +443,36 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
         empresa_sql, empresa_params = self._empresa_filter("P.PAG_EMPRESA", empresa_id)
 
         if report_type == "faturado":
-            valor_aberto_sql = self._pagamento_valor_aberto_sql("P", "CURRENT_DATE")
-            valor_sql = (
-                f"(CAST(COALESCE(P.PAG_VALOR, 0) AS NUMERIC(18,2)) - ({valor_aberto_sql}))"
-            )
-            filtro_sql = "COALESCE(P.PAG_STATUS, '') IN ('PB', 'BX')"
+            sql = f"""
+                SELECT
+                    EXTRACT(YEAR FROM PIT.PIT_DT_ACAO) AS ANO,
+                    EXTRACT(MONTH FROM PIT.PIT_DT_ACAO) AS MES,
+                    COALESCE(SUM(CAST(PIT.PIT_VALOR AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_PAGAMENTO_ITEM PIT
+                INNER JOIN TB_PAGAMENTO P ON P.PAG_ID = PIT.PIT_PAGAMENTO AND P.PAG_EMPRESA = PIT.PIT_EMPRESA
+                WHERE PIT.PIT_ACAO = 'PG'
+                  AND PIT.PIT_DT_ACAO >= DATEADD(-11 MONTH TO CURRENT_DATE)
+                  AND COALESCE(P.PAG_STATUS, '') = 'BX'
+                  AND COALESCE(P.PAG_TIPO, '') <> 'AV'
+                  {empresa_sql.replace("P.PAG_EMPRESA", "PIT.PIT_EMPRESA")}
+                GROUP BY 1, 2
+                ORDER BY 1, 2
+            """
         else:
-            valor_sql = self._pagamento_valor_aberto_sql("P", "CURRENT_DATE")
-            filtro_sql = "COALESCE(P.PAG_STATUS, '') IN ('AB', 'PB')"
-
-        sql = f"""
-            SELECT
-                EXTRACT(YEAR FROM P.PAG_DT_VENCIMENTO) AS ANO,
-                EXTRACT(MONTH FROM P.PAG_DT_VENCIMENTO) AS MES,
-                COALESCE(
-                    SUM(CAST({valor_sql} AS NUMERIC(18,2))),
-                    0
-                ) AS TOTAL
-            FROM TB_PAGAMENTO P
-            WHERE P.PAG_DT_VENCIMENTO >= DATEADD(-11 MONTH TO CURRENT_DATE)
-              AND COALESCE(P.PAG_STATUS, '') <> 'CANCELADO'
-              AND {filtro_sql}
-              {empresa_sql}
-            GROUP BY 1, 2
-            ORDER BY 1, 2
-        """
+            valor_sql, filtro_sql, _ = self._pagar_metric_sql("P", report_type)
+            sql = f"""
+                SELECT
+                    EXTRACT(YEAR FROM P.PAG_DT_VENCIMENTO) AS ANO,
+                    EXTRACT(MONTH FROM P.PAG_DT_VENCIMENTO) AS MES,
+                    COALESCE(SUM(CAST({valor_sql} AS NUMERIC(18,2))), 0) AS TOTAL
+                FROM TB_PAGAMENTO P
+                WHERE P.PAG_DT_VENCIMENTO >= DATEADD(-11 MONTH TO CURRENT_DATE)
+                  AND COALESCE(P.PAG_STATUS, '') <> 'CN'
+                  AND {filtro_sql}
+                  {empresa_sql}
+                GROUP BY 1, 2
+                ORDER BY 1, 2
+            """
 
         rows = self._fetch_all(sql, empresa_params)
         return [self._safe_int(row.get("TOTAL")) for row in rows][-12:]
@@ -433,32 +499,33 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
         empresa_rec_sql, empresa_rec_params = self._empresa_filter("R.REC_EMPRESA", empresa_id)
         empresa_pag_sql, empresa_pag_params = self._empresa_filter("P.PAG_EMPRESA", empresa_id)
 
-        rec_valor_sql, rec_filtro_sql, rec_data_sql = self._receber_metric_sql("R", "faturado")
-        pag_valor_sql, pag_filtro_sql, pag_data_sql = self._pagar_metric_sql("P", "faturado")
-
         receitas_sql = f"""
             SELECT
-                EXTRACT(YEAR FROM R.REC_DT_EMISSAO) AS ANO,
-                EXTRACT(MONTH FROM R.REC_DT_EMISSAO) AS MES,
-                COALESCE(SUM(CAST({rec_valor_sql} AS NUMERIC(18,2))), 0) AS TOTAL
-            FROM TB_RECEBIMENTO R
-            WHERE {rec_data_sql}
-              AND COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
-              AND {rec_filtro_sql}
-              {empresa_rec_sql}
+                EXTRACT(YEAR FROM RIT.RIT_DT_ACAO) AS ANO,
+                EXTRACT(MONTH FROM RIT.RIT_DT_ACAO) AS MES,
+                COALESCE(SUM(CAST(RIT.RIT_VALOR AS NUMERIC(18,2))), 0) AS TOTAL
+            FROM TB_RECEBIMENTO_ITEM RIT
+            INNER JOIN TB_RECEBIMENTO R ON R.REC_ID = RIT.RIT_RECEBIMENTO AND R.REC_EMPRESA = RIT.RIT_EMPRESA
+            WHERE RIT.RIT_ACAO = 'RC'
+              AND RIT.RIT_DT_ACAO BETWEEN :start_date AND :end_date
+              AND R.REC_STATUS = 'BX'
+              AND R.REC_TIPO <> 'AV'
+              {empresa_rec_sql.replace("R.REC_EMPRESA", "RIT.RIT_EMPRESA")}
             GROUP BY 1, 2
         """
 
         despesas_sql = f"""
             SELECT
-                EXTRACT(YEAR FROM P.PAG_DT_VENCIMENTO) AS ANO,
-                EXTRACT(MONTH FROM P.PAG_DT_VENCIMENTO) AS MES,
-                COALESCE(SUM(CAST({pag_valor_sql} AS NUMERIC(18,2))), 0) AS TOTAL
-            FROM TB_PAGAMENTO P
-            WHERE {pag_data_sql}
-              AND COALESCE(P.PAG_STATUS, '') <> 'CANCELADO'
-              AND {pag_filtro_sql}
-              {empresa_pag_sql}
+                EXTRACT(YEAR FROM PIT.PIT_DT_ACAO) AS ANO,
+                EXTRACT(MONTH FROM PIT.PIT_DT_ACAO) AS MES,
+                COALESCE(SUM(CAST(PIT.PIT_VALOR AS NUMERIC(18,2))), 0) AS TOTAL
+            FROM TB_PAGAMENTO_ITEM PIT
+            INNER JOIN TB_PAGAMENTO P ON P.PAG_ID = PIT.PIT_PAGAMENTO AND P.PAG_EMPRESA = PIT.PIT_EMPRESA
+            WHERE PIT.PIT_ACAO = 'PG'
+              AND PIT.PIT_DT_ACAO BETWEEN :start_date AND :end_date
+              AND COALESCE(P.PAG_STATUS, '') = 'BX'
+              AND COALESCE(P.PAG_TIPO, '') <> 'AV'
+              {empresa_pag_sql.replace("P.PAG_EMPRESA", "PIT.PIT_EMPRESA")}
             GROUP BY 1, 2
         """
 
@@ -510,12 +577,13 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
 
         receitas_sql = f"""
             SELECT
-                EXTRACT(YEAR FROM R.REC_DT_EMISSAO) AS ANO,
-                EXTRACT(MONTH FROM R.REC_DT_EMISSAO) AS MES,
+                EXTRACT(YEAR FROM R.REC_DT_VENCIMENTO) AS ANO,
+                EXTRACT(MONTH FROM R.REC_DT_VENCIMENTO) AS MES,
                 COALESCE(SUM(CAST({rec_valor_sql} AS NUMERIC(18,2))), 0) AS TOTAL
             FROM TB_RECEBIMENTO R
             WHERE {rec_data_sql}
-              AND COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
+              AND COALESCE(R.REC_STATUS, '') <> 'CN'
+              AND COALESCE(R.REC_TIPO, '') <> 'CR'
               AND {rec_filtro_sql}
               {empresa_rec_sql}
             GROUP BY 1, 2
@@ -528,7 +596,7 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
                 COALESCE(SUM(CAST({pag_valor_sql} AS NUMERIC(18,2))), 0) AS TOTAL
             FROM TB_PAGAMENTO P
             WHERE {pag_data_sql}
-              AND COALESCE(P.PAG_STATUS, '') <> 'CANCELADO'
+              AND COALESCE(P.PAG_STATUS, '') <> 'CN'
               AND {pag_filtro_sql}
               {empresa_pag_sql}
             GROUP BY 1, 2
@@ -579,14 +647,16 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
         report_type: str,
     ) -> list[dict[str, Any]]:
         empresa_sql, empresa_params = self._empresa_filter("R.REC_EMPRESA", empresa_id)
-        valor_sql, filtro_sql, _ = self._receber_metric_sql("R", report_type)
+        # Aging sempre mostra o que está em aberto, independente do report_type do dashboard
+        valor_sql, filtro_sql, _ = self._receber_metric_sql("R", "aberto")
 
         sql = f"""
             SELECT
                 R.REC_DT_VENCIMENTO,
                 CAST({valor_sql} AS NUMERIC(18,2)) AS VALOR_BASE
             FROM TB_RECEBIMENTO R
-            WHERE COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
+            WHERE COALESCE(R.REC_STATUS, '') <> 'CN'
+              AND COALESCE(R.REC_TIPO, '') <> 'AV'
               AND {filtro_sql}
               AND CAST({valor_sql} AS NUMERIC(18,2)) > 0
               {empresa_sql}
@@ -676,7 +746,8 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
                 ON P.PES_ID = R.REC_PESSOA
             WHERE {data_sql}
               AND R.REC_PESSOA IS NOT NULL
-              AND COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
+              AND COALESCE(R.REC_STATUS, '') <> 'CN'
+              AND COALESCE(R.REC_TIPO, '') <> 'AV'
               AND {filtro_sql}
               {empresa_sql}
             GROUP BY
@@ -723,7 +794,7 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
                 ON PS.PES_ID = P.PAG_PESSOA
             WHERE {data_sql}
               AND P.PAG_PESSOA IS NOT NULL
-              AND COALESCE(P.PAG_STATUS, '') <> 'CANCELADO'
+              AND COALESCE(P.PAG_STATUS, '') <> 'CN'
               AND {filtro_sql}
               {empresa_sql}
             GROUP BY
@@ -914,7 +985,7 @@ class DashboardFinanceiroRepository(BaseDashboardRepository):
                 ON CID.CID_ID = P.PES_CIDADE
             WHERE {data_sql}
               AND R.REC_PESSOA IS NOT NULL
-              AND COALESCE(R.REC_STATUS, '') <> 'CANCELADO'
+              AND COALESCE(R.REC_STATUS, '') <> 'CN'
               AND {filtro_sql}
               {empresa_sql}
             GROUP BY CID.CID_ID, CID.CID_NOME

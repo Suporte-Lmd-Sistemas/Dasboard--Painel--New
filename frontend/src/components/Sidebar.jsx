@@ -23,6 +23,7 @@ function Sidebar({
   const isVendasRoute = location.pathname === "/dashboard/vendas";
   const isFinanceiroRoute = location.pathname === "/dashboard/financeiro";
   const isEstoqueRoute = location.pathname === "/dashboard/estoque";
+  const isFiliaisRoute = location.pathname === "/dashboard/filiais";
   const isRelatoriosRoute = location.pathname.startsWith("/relatorios");
   const isFuncionariosRoute = location.pathname.startsWith("/funcionarios");
   const isPerformanceRoute = location.pathname.startsWith("/performance");
@@ -100,6 +101,16 @@ function Sidebar({
                 }`}
               >
                 Estoque
+              </Link>
+              
+              <Link
+                to="/dashboard/filiais"
+                onClick={handleMobileNavigate}
+                className={`submenu-item ${
+                  isFiliaisRoute ? "submenu-item-active" : ""
+                }`}
+              >
+                Filiais
               </Link>
             </div>
           )}

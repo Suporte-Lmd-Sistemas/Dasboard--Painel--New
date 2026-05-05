@@ -1,34 +1,40 @@
+import { useEffect, useState } from "react";
 import Topbar from "../components/Topbar";
+import api from "../services/api";
 import "../styles/dashboard.css";
 import "../styles/topbar.css";
 
-const MOCK_STOCK_KPIs = [
-  { label: "Produtos", value: "35.383", sub: "28.879 ativos • 6.504 inativos", color: "#2563eb", icon: "📦" },
-  { label: "Valor em Estoque (Custo)", value: "R$ 2.688.414,27", sub: "", color: "#b48c04", icon: "💲" },
-  { label: "Valor em Estoque (Venda)", value: "R$ 5.462.473,47", sub: "", color: "#16a34a", icon: "💲" },
-  { label: "Alertas", value: "30.265", sub: "23.721 sem estoque • 6.544 abaixo do mínimo", color: "#ea580c", icon: "⚠️" },
-];
+const formatCurrency = (val) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(val || 0);
 
-const MOCK_PURCHASE_KPIs = [
-  { label: "Compras (Últimos 30 dias)", value: "84", color: "#2563eb", icon: "📄" },
-  { label: "Valor Total de Compras (Últimos 30 dias)", value: "R$ 272.535,81", color: "#16a34a", icon: "💲" },
-];
-
-const MOCK_TURNOVER = [
-  { produto: "BIELETA VW GOL/FOX/SAVEIRO/VOYAGE/POLO/NIVUS/UP!/T-CROSS/SPACEFOX/CROSS 01/24 (Z", vendida: 153, estoque: 28 },
-  { produto: "BIELETA VW GOL/FOX/SAVEIRO/VOYAGE/POLO/NIVUS/UP!/T-CROSS/SPACEFOX/CROSS 01/24 (Z", vendida: 153, estoque: 1 },
-  { produto: "BIELETA VW GOL/FOX/SAVEIRO/VOYAGE/POLO/NIVUS/UP!/T-CROSS/SPACEFOX/CROSS 01/24 (Z", vendida: 153, estoque: 29 },
-  { produto: "BIELETA VW GOL/FOX/SAVEIRO/VOYAGE/POLO/NIVUS/UP!/T-CROSS/SPACEFOX/CROSS 01/24 (Z", vendida: 150, estoque: 12 },
-];
-
-const MOCK_OUT_OF_STOCK = [
-  { produto: "KIT CORREIA DENTADA+TENSOR VW GOL G2/G3/G4/G5/G6/PARATI/SAVEIRO/FOX/VOYAGE 1.0/1", estoque: -671, minimo: 4 },
-  { produto: "KIT CORREIA DENTADA+TENSOR GM CORSA/CELTA/PRISMA/MONTANA 1.0/1.4/1.6 8V 94/..-FI", estoque: -588, minimo: 4 },
-  { produto: "KIT CORREIA DENTADA+TENSOR FIAT FIRE PALIO/STRADA/SIENA/UNO MOTOR 1.0/1.3 8V", estoque: -537, minimo: 4 },
-  { produto: "KIT CORREIA DENTADA+TENSOR FIAT FIRE PALIO/STRADA/SIENA/UNO MOTOR 1.0/1.3 8V", estoque: -512, minimo: 4 },
-];
+const formatNumber = (val) =>
+  new Intl.NumberFormat("pt-BR").format(val || 0);
 
 export default function DashboardEstoque({ onToggleSidebar, isMobileOrTablet, theme, toggleTheme }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const response = await api.get("/api/dashboard/estoque");
+        setData(response.data);
+      } catch (err) {
+        console.error("Erro ao carregar estoque:", err);
+        setError("Não foi possível carregar os dados de estoque.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) return <div className="dashboard-page"><div className="empty-state">Carregando dados de estoque...</div></div>;
+  if (error) return <div className="dashboard-page"><div className="empty-state error">{error}</div></div>;
+  if (!data) return null;
+
   return (
     <div className="dashboard-page">
       <Topbar
@@ -46,24 +52,49 @@ export default function DashboardEstoque({ onToggleSidebar, isMobileOrTablet, th
       </div>
 
       <div className="cards-grid">
-        {MOCK_STOCK_KPIs.map((kpi, idx) => (
-          <div key={idx} className="card-kpi" style={{ backgroundColor: kpi.color, border: 'none', position: 'relative' }}>
-            <h3 style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>{kpi.label}</h3>
-            <p style={{ color: '#fff', fontSize: '28px', marginBottom: '8px' }}>{kpi.value}</p>
-            {kpi.sub && <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>{kpi.sub}</span>}
-            <span style={{ position: 'absolute', right: '20px', bottom: '20px', fontSize: '24px', opacity: 0.5 }}>{kpi.icon}</span>
-          </div>
-        ))}
+        <div className="card-kpi" style={{ backgroundColor: "#2563eb", border: 'none', position: 'relative' }}>
+          <h3 style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>Produtos</h3>
+          <p style={{ color: '#fff', fontSize: '28px', marginBottom: '8px' }}>{formatNumber(data.resumo.totalProdutos)}</p>
+          <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>
+            {formatNumber(data.resumo.ativos)} ativos • {formatNumber(data.resumo.inativos)} inativos
+          </span>
+          <span style={{ position: 'absolute', right: '20px', bottom: '20px', fontSize: '24px', opacity: 0.5 }}>📦</span>
+        </div>
+
+        <div className="card-kpi" style={{ backgroundColor: "#b48c04", border: 'none', position: 'relative' }}>
+          <h3 style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>Valor em Estoque (Custo)</h3>
+          <p style={{ color: '#fff', fontSize: '28px', marginBottom: '8px' }}>{formatCurrency(data.valores.custoTotal)}</p>
+          <span style={{ position: 'absolute', right: '20px', bottom: '20px', fontSize: '24px', opacity: 0.5 }}>💲</span>
+        </div>
+
+        <div className="card-kpi" style={{ backgroundColor: "#16a34a", border: 'none', position: 'relative' }}>
+          <h3 style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>Valor em Estoque (Venda)</h3>
+          <p style={{ color: '#fff', fontSize: '28px', marginBottom: '8px' }}>{formatCurrency(data.valores.vendaTotal)}</p>
+          <span style={{ position: 'absolute', right: '20px', bottom: '20px', fontSize: '24px', opacity: 0.5 }}>💲</span>
+        </div>
+
+        <div className="card-kpi" style={{ backgroundColor: "#ea580c", border: 'none', position: 'relative' }}>
+          <h3 style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>Alertas</h3>
+          <p style={{ color: '#fff', fontSize: '28px', marginBottom: '8px' }}>{formatNumber(data.alertas.total)}</p>
+          <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>
+            {formatNumber(data.alertas.semEstoque)} sem estoque • {formatNumber(data.alertas.abaixoMinimo)} abaixo do mínimo
+          </span>
+          <span style={{ position: 'absolute', right: '20px', bottom: '20px', fontSize: '24px', opacity: 0.5 }}>⚠️</span>
+        </div>
       </div>
 
       <div className="dashboard-main-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px', marginBottom: '20px' }}>
-        {MOCK_PURCHASE_KPIs.map((kpi, idx) => (
-          <div key={idx} className="card-kpi" style={{ backgroundColor: kpi.color, border: 'none', position: 'relative', padding: '24px' }}>
-            <h3 style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>{kpi.label}</h3>
-            <p style={{ color: '#fff', fontSize: '28px', marginBottom: '0' }}>{kpi.value}</p>
-            <span style={{ position: 'absolute', right: '24px', top: '50%', transform: 'translateY(-50%)', fontSize: '28px', opacity: 0.5 }}>{kpi.icon}</span>
-          </div>
-        ))}
+        <div className="card-kpi" style={{ backgroundColor: "#2563eb", border: 'none', position: 'relative', padding: '24px' }}>
+          <h3 style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>Compras (Últimos 30 dias)</h3>
+          <p style={{ color: '#fff', fontSize: '28px', marginBottom: '0' }}>{formatNumber(data.compras.quantidade)}</p>
+          <span style={{ position: 'absolute', right: '24px', top: '50%', transform: 'translateY(-50%)', fontSize: '28px', opacity: 0.5 }}>📄</span>
+        </div>
+
+        <div className="card-kpi" style={{ backgroundColor: "#16a34a", border: 'none', position: 'relative', padding: '24px' }}>
+          <h3 style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>Valor Total de Compras (Últimos 30 dias)</h3>
+          <p style={{ color: '#fff', fontSize: '28px', marginBottom: '0' }}>{formatCurrency(data.compras.valorTotal)}</p>
+          <span style={{ position: 'absolute', right: '24px', top: '50%', transform: 'translateY(-50%)', fontSize: '28px', opacity: 0.5 }}>💲</span>
+        </div>
       </div>
 
       <div className="two-columns">
@@ -81,11 +112,11 @@ export default function DashboardEstoque({ onToggleSidebar, isMobileOrTablet, th
                 </tr>
               </thead>
               <tbody>
-                {MOCK_TURNOVER.map((item, idx) => (
+                {data.rotatividade.map((item, idx) => (
                   <tr key={idx}>
                     <td style={{ paddingLeft: '24px', fontSize: '12px', lineHeight: '1.4', maxWidth: '300px' }}>{item.produto}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 700 }}>{item.vendida}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 700, paddingRight: '24px' }}>{item.estoque}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 700 }}>{formatNumber(item.vendida)}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 700, paddingRight: '24px' }}>{formatNumber(item.estoque)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -111,11 +142,11 @@ export default function DashboardEstoque({ onToggleSidebar, isMobileOrTablet, th
                 </tr>
               </thead>
               <tbody>
-                {MOCK_OUT_OF_STOCK.map((item, idx) => (
+                {data.criticos.map((item, idx) => (
                   <tr key={idx}>
                     <td style={{ paddingLeft: '24px', fontSize: '12px', lineHeight: '1.4', maxWidth: '300px' }}>{item.produto}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 700, color: item.estoque <= 0 ? '#ef4444' : 'inherit' }}>{item.estoque}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 700 }}>{item.minimo}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 700, color: item.estoque <= 0 ? '#ef4444' : 'inherit' }}>{formatNumber(item.estoque)}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 700 }}>{formatNumber(item.minimo)}</td>
                     <td style={{ paddingRight: '24px' }}>
                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444', marginLeft: 'auto' }} />
                     </td>
